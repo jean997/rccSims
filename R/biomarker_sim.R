@@ -68,7 +68,7 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100,
     ct <- quantile(abs(stats$statistic), probs=0.9)
     wfb <- lapply(stats$statistic, FUN=function(x){
       if(abs(x) < ct) return(c(NA, NA))
-      ci <- try(rcc:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+      ci <- try(rccSims:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
       if(class(ci) == "try-error") return(c(NA, NA))
       return(unlist(ci))
     })
