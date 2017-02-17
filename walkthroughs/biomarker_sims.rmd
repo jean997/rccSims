@@ -31,12 +31,14 @@ In each simulation, we generate data for 400 participants --- 200 in each treatm
 
 ```{r}
 library(ggplot2)
+library(rcc)
+library(rccSims)
+set.seed(1e7)
 n <- 2*200
 mean_outcome <- function(x, trt){
   if(x < 0.5) return(0)
   return(0.5*trt)
 }
-set.seed(1e7)
 dat <- data.frame("trt"=rep(c(0, 1), each=n/2), "w"=runif(n=n))
 dat$Ey <- apply(dat, MARGIN=1, FUN=function(z){mean_outcome(z[2],z[1])})
 dat$y <- rnorm(n=n, mean=dat$Ey, sd=0.5)
@@ -82,7 +84,7 @@ stats$truth <-sapply(cutpoints, FUN=function(wj){
 ```
 
 Plotting effect size estimates and true parameter values vs. cutpoint:
-```{r echo=FALSE}
+```{r}
 library(tidyr)
 stats_long <- gather(stats[, c("cutpoint", "beta", "truth")], "type", "value", -cutpoint)
 ggplot(stats_long) + geom_point(aes(x=cutpoint, y=value, group=type, color=type)) + 
@@ -97,7 +99,7 @@ Because we use the same individuals to estimate each parameter, the estimates ar
 ### Non-Parametric Bootstrap
 The non-parametric bootstrap is the most appropriate choice for these data since the estimates are correlated. Only the non-parametric bootstrap can model this correlation. To use the `nonpar_bs_ci` function in the `rcc` package to compute the nonparametric boostrap confidence intervals, we must supply an analysis function. We will use a data object that has $trt$, $w$, $E[Y]$, and $Y$ as the first four columns and the indicator variables $1_{W > w_j}$ as the next 100 columns as input.
 
-```{r, af, cache=TRUE}
+```{r, af}
 mydata <- cbind(dat, ix)
 analysis.func <- function(data){
   y <- data[,4]
@@ -117,6 +119,7 @@ analysis.func <- function(data){
 Here we calculate the non-parametrci bootstrap confidence intervals (Algorithm 3 in the paper):
 ```{r, nonpar, cache=TRUE}
 library(parallel)
+library(rcc)
 ci.nonpar <- nonpar_bs_ci(data=mydata, analysis.func=analysis.func, n.rep=500, parallel=TRUE)
 sum(ci.nonpar$ci[,1] <= stats$truth & stats$truth <= ci.nonpar$ci[,2])/n.cutpoints
 ```
@@ -124,13 +127,14 @@ sum(ci.nonpar$ci[,1] <= stats$truth & stats$truth <= ci.nonpar$ci[,2])/n.cutpoin
 
 Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.
 ```{r}
-plot_cis(rank, ci.nonpar$ci, stats$truth, plot.truth=TRUE) + 
+library(rccSims)
+plot_cis(stats$rank, ci.nonpar$ci, stats$truth, plot.truth=TRUE) + 
   ggtitle("Non-Parametric Bootstrap Confidence Intervals")
 ```
 Here they are plotted versus cutpoint:
 ```{r}
 plot_cis(cutpoints, ci.nonpar$ci, stats$truth, plot.truth=TRUE) + 
-  ggtitle("Non-Parametric Bootstrap Confidence Intervals")
+  ggtitle("Non-Parametric Bootstrap Confidence Intervals") + xlab("Cutpoint")
 ```
 
 
@@ -144,56 +148,112 @@ ci.par <- rcc::par_bs_ci(beta=stats$beta, se=stats$se, n=500, use.abs=TRUE)
 ```
 Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.
 ```{r}
-plot_cis(rank, ci.par$ci, stats$truth, plot.truth=TRUE) + 
+plot_cis(stats$rank, ci.par$ci, stats$truth, plot.truth=TRUE) + 
   ggtitle("Parametric Bootstrap Confidence Intervals")
 ```
 Here they are plotted versus cut-point:
 ```{r}
 plot_cis(cutpoints, ci.par$ci, stats$truth, plot.truth=TRUE) + 
-  ggtitle("Parametric Bootstrap Confidence Intervals")
+  ggtitle("Parametric Bootstrap Confidence Intervals") + xlab("Cutpoint")
 ```
 
+The parametric bootstrap confidence intervals perform more poorly than the non-parametric confidence intervals because estimates are highly correlated but this isn't modeled in the basic parametric bootstrapping algorithm. These intervals tend to undercover parameters associated with the most and least significant estimates.
 
 ### Marginal Confidence Intervals
 For comparison, let's look at the naive confidence intervals:
 ```{r}
  ci.naive <- cbind(stats$beta-stats$se*qnorm(0.95), stats$beta + stats$se*qnorm(0.95))
-sum(ci.naive[,1] <= stats$truth & stats$truth <= ci.naive[,2])/100
+mean(ci.naive[,1] <= stats$truth & stats$truth <= ci.naive[,2])
 ```
 ```{r}
-plot_cis(rank, ci.naive, stats$truth, plot.truth=TRUE) + 
+plot_cis(stats$rank, ci.naive, stats$truth, plot.truth=TRUE) + 
   ggtitle("Standard Marginal Confidence Intervals")
 plot_cis(cutpoints, ci.naive, stats$truth, plot.truth=TRUE) + 
-  ggtitle("Standard Marginal Confidence Intervals")
+  ggtitle("Standard Marginal Confidence Intervals") + xlab("Cutpoint")
 ```
 These do pretty well since the estimates are so correlated.
-## Selection Adjusted Confidence Intervals
 
-## Empirical Bayes Confidence Intervals
+### Selection Adjusted Confidence Intervals
 
-## Replicate the results in the paper
+Here are the selection adjusted intervals of the intervals of  @Weinstein2013 after selecting the top 10 (10\%) parameters. o make running simulations easier, we have included the code distributed by @Weinstein2013 in the `rccSims` package. The `Shortest.CI` function used below is part of this code.
 
-```{r, eval=FALSE}
-library(parallel)
-biomarker_results <- biomarker_sim(n=400, n.rep = 100, n.cutpoints = 100, seed =1e7)
+```{r}
+#We need to give this method the "cutpoint" or minimum value of the test statistic
+ct <- abs(stats$tstat[stats$rank==11])
+wfb <- lapply(stats$tstat, FUN=function(x){
+			  if(abs(x) < ct) return(c(NA, NA))
+			  ci <- try(rccSims::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+			  if(class(ci) == "try-error") return(c(NA, NA)) #Sometimes WFB code produces errors
+			  return(ci)
+			 })
+ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=n.cutpoints)
+ci.wfb[,1]<- ci.wfb[,1]*stats$se
+ci.wfb[,2]<- ci.wfb[,2]*stats$se
+mean(ci.wfb[,1] <= stats$truth & ci.wfb[,2]>= stats$truth, na.rm=TRUE)
+```
+
+Here are the 10 WFB intervals which all cover their respective parameters
+```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+rccSims::plot_cis(stats$rank, ci.wfb, stats$truth, plot.truth=TRUE) + ggtitle("Weinstein, Fithian, and Benjamini Intervals")
 ```
 
 
-Plotting:
+Here are the selection adjusted confidence intervals of @Reid2014. These are implemented in the `selectiveInference` R package.
+
+```{r, warning=FALSE, message=FALSE}
+library(selectiveInference)
+M <- manyMeans(y=stats$tstat, k=0.1*n.cutpoints, alpha=0.1, sigma=1)
+ci.rtt <- matrix(nrow=n.cutpoints, ncol=2)
+ci.rtt[M$selected.set, ] <- M$ci
+mean(ci.rtt[,1] <= stats$truth & ci.rtt[,2]>= stats$truth, na.rm=TRUE)
+```
+
+```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+rccSims::plot_cis(stats$rank, ci.rtt, stats$truth, plot.truth=TRUE, prop=0.2) + ggtitle("Reid, Taylor, and Tibshirani Intervals")
+```
+
+This method gives the 10th ranked parameter an very short confidence interval!
+
+### Empirical Bayes Confidence Intervals
+
+Here are the credible intervals we get out of ashr (@stephens2016)
+
+```{r, message=FALSE}
+library(ashr)
+ash.res <- ash(betahat = stats$beta, sebetahat = stats$se, mixcompdist = "normal")
+ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:n.cutpoints, trace=FALSE)
+mean(ci.ash[,1]<= stats$truth & ci.ash[,2] >= stats$truth)
+```
+
+
+Here are the ashr intervals at all ranks
+```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+rccSims::plot_cis(stats$rank, ci.ash, stats$truth) + ggtitle("ashr Credible Intervals (Stephens 2016)")
+```
+
+## Replicate the results in the paper
+The steps above are all implemented by the `biomarker_sim` function in the `rccSims` package. This code will generate the results in package:
+```{r, eval=FALSE}
+library(parallel)
+biomarker_results <- biomarker_sim(n=400, n.rep = 400, n.cutpoints = 100, seed =1e7)
+```
+These results are also included as a built-in data set in the `rccSims` package.
+
+This generates the plots shown in the paper:
 ```{r plotresults, show="hold", out.width="0.5\\textwidth"}
-data("biomarker_results", package="rcc")
-coverageplot <- rcc:::plot_coverage(biomarker_results, proportion=1,
+data("biomarker_results", package="rccSims")
+coverageplot <- rccSims::plot_coverage(biomarker_results, proportion=1,
       cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
       simnames=c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"), 
       ltys= c(2, 1, 3, 6, 4, 2), 
       span=0.5, main="Rank Conditional Coverage", y.range=c(-0.02, 1.02),
       legend.position = "none") + theme(plot.title=element_text(hjust=0.5))
-widthplot <- rcc:::plot_width(biomarker_results, proportion=1,
+widthplot <- rccSims::plot_width(biomarker_results, proportion=1,
       cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
       simnames=c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"), 
       ltys= c(2, 1, 3, 6, 4, 2), span=0.5, main="Interval Width",
       legend.position = "none") + theme(plot.title=element_text(hjust=0.5))
-legend <- rcc:::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
+legend <- rccSims::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
                                                  "Non-Parametric\nBootstrap", "ashr", "WFB", "RTT"), 
             cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
             ltys= c(2, 1, 3, 6, 4, 2))
@@ -203,6 +263,7 @@ legend$plot
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
+library(gridExtra)
 h1 <- grid.arrange(coverageplot, widthplot, ncol=2)
-ggsave(h1, file="~/Dropbox/rcc-temp/for_jcgs/img/biomarker.pdf", heigh=4, width=8, units="in", dpi=300)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/biomarker.pdf", heigh=4, width=8, units="in", dpi=300)
 ```

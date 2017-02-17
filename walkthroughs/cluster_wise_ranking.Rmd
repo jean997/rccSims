@@ -191,7 +191,7 @@ plot_cis(f_marg$rank_block[block_ix], ci.ash[block_ix,], f_marg$truth[block_ix],
 
 ## Simulations in Section 3.1 and Appendix section 3
 
-Simulation results for usual ranking are shown in Section 3.1 and for block based ranking in Appendix Section 3. All of the steps in the previous section plust the intervals of  @Weinstein2013 and @Reid2014 are implemented executed by the `cluster_sim` function in the `rccSims` package. We ran 400 simulations for each of four values of $\rho$. Since these take a little bit longer to run than the example in Section 1.5 (since we include the non-parametric bootstrap), we ran the simulations simulataneously as individual jobs submitted to a large cluster and each job had it's own seed. If you didn't have access to a cluster, the following loop would generate the same results (and uses the same seeds), but we recomend running these in parallel rather than in a loop.
+Simulation results for usual ranking are shown in Section 3.1 and for block based ranking in Appendix Section 3. All of the steps in the previous section plus the intervals of  @Weinstein2013 and @Reid2014 are implemented executed by the `cluster_sim` function in the `rccSims` package. We ran 400 simulations for each of four values of $\rho$. Since these take a little bit longer to run than the example in Section 1.5 (since we include the non-parametric bootstrap), we ran the simulations simulataneously as individual jobs submitted to a large cluster and each job had it's own seed. If you didn't have access to a cluster, the following loop would generate the same results (and uses the same seeds), but we recomend running these in parallel rather than in a loop.
 
 ```{r, eval=FALSE}
 set.seed(5989615)
