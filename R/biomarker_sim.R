@@ -13,15 +13,13 @@
 #'  \item{\code{simnames}}{Name of each type of the 5 types of confidence intervals}
 #' }
 #'@export
-biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
+biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100,
                           seed=NULL, parallel=TRUE){
   stopifnot(n %%2 == 0)
-  if(is.null(mean_outcome)){
-    mean_outcome <- function(x, trt){
-      if(x < 0.5) return(0)
-      #return((x-0.5)*trt)
-      return(0.5*trt)
-    }
+
+  mean_outcome <- function(x, trt){
+    if(x < 0.5) return(0)
+    return(0.5*trt)
   }
   analysis.func <- function(data){
     y <- data[,4]
@@ -47,7 +45,7 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     dat <- data.frame("trt"=rep(c(0, 1), each=n/2), "w"=runif(n=n))
     dat$mu <- apply(dat, MARGIN=1, FUN=function(z){mean_outcome(z[2],z[1])})
     dat$y <- rnorm(n=n, mean=dat$mu, sd=0.5)
-    
+
     #Stats
     ix <- sapply(cutpoints, FUN=function(thresh){as.numeric(dat$w >= thresh)})
     mydata <- cbind(dat, ix)
@@ -55,22 +53,17 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     stats$truth <- sapply(cutpoints, FUN=function(wj){
       0.5*(min(1-wj, 0.5)/(1-wj)) - 0.5*max(0, wj-0.5)/wj})
     j <- order(abs(stats$statistic), decreasing = TRUE)
-    
+
     #Non parametric bootstrap
     ci.nonpar <- nonpar_bs_ci(data=mydata, analysis.func=analysis.func, n.rep=500, parallel=parallel, level=0.9)
     COVERAGE[which(simnames=="nonpar"), ,i] <- (ci.nonpar$ci[,1] < stats$truth & stats$truth < ci.nonpar$ci[,2])[j]
     WIDTH[which(simnames=="nonpar"), , i] <- (ci.nonpar$ci[,2] -ci.nonpar$ci[,1])[j]
-    
+
     #Parametric bootstrap
     ci.par <- par_bs_ci(stats$estimate, stats$se, n=500, level=0.9, use.abs=TRUE)
     COVERAGE[which(simnames=="par"), ,i] <- (ci.par$ci[,1] < stats$truth & stats$truth < ci.par$ci[,2])[j]
     WIDTH[which(simnames=="par"), , i] <- (ci.par$ci[,2]-ci.par$ci[,1])[j]
-    
-    #Parametric bootstrap with oracle mean (no covariance)
-    ci.opar <- par_bs_ci(stats$estimate, stats$se, n=500, theta=stats$truth, level=0.9, use.abs=TRUE)
-    COVERAGE[which(simnames=="opar"), ,i] <- (ci.opar$ci[,1] < stats$truth & stats$truth < ci.opar$ci[,2])[j]
-    WIDTH[which(simnames=="opar"), , i] <- (ci.opar$ci[,2]-ci.opar$ci[,1])[j]
-    
+
     #WFB CIs conditional on taking the top 10%
     ct <- quantile(abs(stats$statistic), probs=0.9)
     wfb <- lapply(stats$statistic, FUN=function(x){
@@ -84,12 +77,12 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     ci.wfb[,2]<- ci.wfb[,2]*stats$se
     COVERAGE[which(simnames=="wfb"), ,i] <- (ci.wfb[,1] < stats$truth & stats$truth < ci.wfb[,2])[j]
     WIDTH[which(simnames=="wfb"), , i] <- (ci.wfb[,2]-ci.wfb[,1])[j]
-    
+
     #Naive ci
     ci.naive <- cbind(stats$estimate-stats$se*qnorm(0.95), stats$estimate + stats$se*qnorm(0.95))
     COVERAGE[which(simnames=="naive"), ,i] <- (ci.naive[,1] < stats$truth & stats$truth< ci.naive[,2])[j]
     WIDTH[which(simnames=="naive"), , i] <- (ci.naive[,2]-ci.naive[,1])[j]
-    
+
     #Reid, Taylor, Tibshirani method (selectiveInference)
     M <- manyMeans(y=stats$statistic, k=0.1*n.cutpoints, alpha=0.1, sigma=1)
     ci.rtt1 <- matrix(nrow=n.cutpoints, ncol=2)
@@ -98,7 +91,7 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     ci.rtt1[,2]<- ci.rtt1[,2]*stats$se
     COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < stats$trut & stats$trut < ci.rtt1[,2])[j]
     WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
-    
+
     ash.res <- ash(betahat = stats$estimate, sebetahat = stats$se, mixcompdist = "normal")
     ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:n.cutpoints, trace=FALSE )
     COVERAGE[simnames == "ash", ,i]<- (ci.ash[,1] < stats$trut & stats$trut < ci.ash[,2])[j]

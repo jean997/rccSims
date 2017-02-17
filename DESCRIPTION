@@ -10,3 +10,4 @@ Encoding: UTF-8
 LazyData: true
 URL: http://github.com/jean997/rccSims
 BugReports: http://github.com/jean997/rccSims/issues
+RoxygenNote: 6.0.1

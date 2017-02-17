@@ -11,7 +11,7 @@
 #'@param span. Value of span to pass to loess. If present, coverage will be smoothed.
 #'@return A ggplot object
 #'@export
-plot_coverage <- function(R, simnames, cols, shapes, ltys, 
+plot_coverage <- function(R, simnames, cols, shapes, ltys,
                           legend.names=NULL, main="", proportion=0.2,
                           y.axis.off=FALSE, y.range=c(0, 1),
                           legend.position=c(0.28, 0.4), span=NULL){
@@ -106,7 +106,7 @@ plot_width <- function(R, simnames, cols, shapes, ltys, legend.names=NULL,
   avg.width <- data.frame(avg.width)
   names(avg.width) <- nms
   avg.width$Rank <- 1:k
-  
+
   avg.width.long <- gather(avg.width, "Method", "Average Width", -Rank)
   avg.width.long$Method <- factor( as.character(avg.width.long$Method),
                                    levels=simnames)
@@ -149,15 +149,15 @@ make_sim_legend <- function(legend.names, cols, ltys){
   n <- length(legend.names)
   #points <- data.frame(x=rep(1, 5), y = rev(seq(1, 3, length.out=5)))
   points <- data.frame(y=rep(1, n), x = seq(1, 2.25, length.out=n))
-  
+
   dist <- (2.25 -1)/n
   points$left = points$x-dist*0.4
   points$right = points$x + dist*0.4
-  
+
   points$labs <- legend.names
   points$lty <-ltys
   points$cols <- cols
-  
+
   p <-ggplot(points) +
     geom_segment(aes(x=left, xend=right, y=y, yend=y), lty=points$lty,
                  colour=points$cols, lwd=1.3)+
@@ -167,12 +167,20 @@ make_sim_legend <- function(legend.names, cols, ltys){
     theme_bw() + theme(panel.grid=element_blank(), axis.title=element_blank(),
                        axis.text=element_blank(),
                        panel.border=element_blank(), axis.ticks=element_blank())
-  
+
   #ggsave(p, file="~/Dropbox/cfdr-jean/for_AOAS/img/sim_legend.png", height=1, width=8, units="in", dpi=300)
   return(list("plot"=p, "info"=points))
 }
 
 
+#'Plot a set of confidence intervals and the true parameters
+#'@param rank Rank of each parameter (will by x-axis)
+#'@param ci p by 2 matrix or data frame giving the confidence interval for each parameter
+#'@param truth True parameters (vector of length p)
+#'@param prop Proportion of praameters to plot. Should be less than 1.
+#'@param plot.truth Logical, should the trute parameters be shown on the plot
+#'@return A ggplot object
+#'@export
 plot_cis <- function(rank, ci, truth, prop=1, plot.truth=FALSE){
   dat <- data.frame("Rank"=rank, "ciL"=ci[,1], "ciU"=ci[,2], "truth"=truth)
   dat$covered <-dat$ciL <= truth & dat$ciU >= truth
@@ -180,10 +188,10 @@ plot_cis <- function(rank, ci, truth, prop=1, plot.truth=FALSE){
     nkeep <- ceiling(nrow(dat)*prop)
     dat <- dat[dat$Rank <=nkeep,]
   }
-  p <- ggplot(dat) + geom_linerange(aes(x=Rank, ymin=ciL, ymax=ciU, col=covered)) 
+  p <- ggplot(dat) + geom_linerange(aes(x=Rank, ymin=ciL, ymax=ciU, col=covered))
   if(plot.truth) p <- p + geom_point(aes(x=Rank, y=truth, col=covered))
-  p <- p + 
-    scale_color_discrete(name="Parameter\nCovered") + 
+  p <- p +
+    scale_color_discrete(name="Parameter\nCovered") +
     theme_bw()+
     theme(panel.grid=element_blank())
   return(p)
