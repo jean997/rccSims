@@ -1,295 +1,331 @@
 ---
-title: "Linear Regression with Simulated Genotypes"
+title: "Linear regression with correlated predictors"
 author: "Jean Morrison"
-date: "December 29, 2016"
+date: "January 3, 2017"
 output: pdf_document
-bibliography: ci_bib.bib
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,  fig.show='hold', out.width="0.5\\textwidth")
 ```
 
-This document is an accompanies the paper "Rank conditional coverage and confidence intervals in high dimensional problems." by Jean Morrison and Noah Simon. Here we walk through in detail the linear regression simulations in section 3.1 and reproduce the results shown in the paper. 
-The paper is also accompanied by an `R` package `rcc` which can be found at [github.com/jean997/rcc](https://github.com/jean997/rcc). This package includes all the code needed to reproduce the results shown and we will make use of it throughout this document.
 
-## Generating Genotypes
+In this document I walk through the simulations in Section 3.1 and Appendix Section 3 of "Rank conditional coverage and confidence intervals in high dimensional problems" by Jean Morrison and Noah Simon. We make use of the `rcc` and `rccSims` packages which accompanies the paper and can be found at [github.com/jean997/rcc](https://github.com/jean997/rcc) and [github.com/jean997/rccSims](https://github.com/jean997/rccSims).
 
-Genotypes were generated using MACS (@Chen2009a) which can be downloaded [here](https://github.com/gchen98/macs). 
-MACS will generate SNP genotypes from a coalescent model. We generated five blocks of genotypes each 150kb long in 10,000 individuals (the "populaton"). For each block we set the mutation rate per 4$N_e$ generations to 0.001. Since the recombination rate can differ across the genome, we let the recombination rate per site per 4$N_e$ generations be different in each block --- we used value of 0.001, 0.01, 0.002, 0.004, and 0.001 which span the range of reasonable values for humans. Higher recombination rates lead to less LD per block. 
+## Problem Set-up
 
-From the total population of 10,000, we chose a sample of size 100. We then pruned the SNPs in each block to include only those with a sample minor allele frequency greater than 0.05 and so that the pairwise sample correaltion between SNPs was less than 0.8. This last step prevents us from including SNPs that are in perfect LD. Finally, we retain the first 100 SNPs in each block. 
+We imagine a case similar to a genome-wide association or an expression study. For each of 100 individuals, we have measured 1000 features. In a GWAS these would be genetic variants, while in an expression study these would be the abundances of different gene transcripts. In this simulation, the 1000 features are grouped into 100 blocks, each containing 10 features. Features within a block have a pairwise correlation of $\rho$ -- for this walk-through we use $\rho=0.3$ but results are presented in the paper for $\rho = -0.1, 0, 0.3$ and 0.8. We will show code for generating the full set of results at the end. In each block of features, there is one feature that directly influences the outcome, $y$. The effect sizes for these features are drawn from  a normal distribution.
 
-The `make.genos()` function in the `rcc` package replicates our procedure for generating genotypes. These genotypes are also in the built-in data set `population_genotypes` in the `rcc` package.
-To use the `make.genos()` function you will need to install the MACS, and the `SNPRelate` and `GWASTools` packages from Bioconductor. The function takes two arguments --- the location you have downloaded MACS to (e.g. the directory containing the `macs` and `msformatter` executables) and a temporary directory which defaults to `./`.
+To illustrate the simulations, we will first generate one data set and calculate several different sets of confidence intervals for the prameters. 
 
-## Running Simulations
-
-In this simulation there are 500 genetic variants. We are trying to use the data from the sample of size 100 to estimate the observed effect in the population of size 10,000. We consider 4 combinations of effect sizes for the 500 variants:
-
-1. All effects equal to 0.
-1. 10 effects are equal to 2 and the rest are equal to 0.
-1. 10 effects are drawn from a $N(0, 1)$ distribution and the rest are 0.
-1. 490 effects are drawn from a $N(0, 0.25)$ distribution, 10 are drawn from a $N(2, 1)$ distribution, and the rest are zero. 
-
-In the last three cases, the non-zero effects are distributed evenly among the five LD blocks. We will now walk through one simulation. Everything that follows is consolidated into the `run1_linreg_sim` function and if you only want to replicate the results in the paper you can jump to the code at the end.
-
-
-In each of the four cases, parameter values are fixed over all simulations. Parameters were generated with the function `rcc:::create_linreg_params` and stored in the built-in data set `linreg_params` This is a list with four elements each of which is a 2 column table giving the index of non-zero SNPs and their effect sizes.
-
-## Detailed Simulation walk through
-Here we will walk through one simulation using the second parameter configuration. 
-
-### Generating Phenotypes and Calculating Marginal Effects
-The first step is to generate a phenotype vector for the whole population.
-
-```{r}
-set.seed(6198560)
-
-data("population_genotypes", package="rcc")
-n=100
-p <- 500
-
-data("linreg_params", package="rcc")
-index <- linreg_params[[2]]$index
-beta <- matrix(linreg_params[[2]]$effect, nrow=10)
-#Create the phenotype
-err <- rnorm(n=500)
-y <- population_genotypes[, index] %*% beta + err
-```
-
-The function `many_lr` calculates the observed linear effect in the whole population for each SNP. This took about 4 minutes on a laptop.
-```{r popeffects, cache=TRUE}
-library(parallel)
-effects.pop <- rcc:::many_lr(y, population_genotypes, parallel=TRUE)
-names(effects.pop)
-effects <- effects.pop$beta_hat
-```
-This gives us the effect sizes that we are trying to estimate. Note that we are interested in estimating the observed marginal linear effects in the population, not the parameters used to generate the data. This is important because correlation between SNPs means that even though most of the *conditional* effects used to create the data are zero, the marginal effects will all be non-zero.
-
-The sample is the first 100 individuals in the `population_genotype` matrix. The next step is to try to estimate the population effects using just this sample. 
-
-```{r sampleeffects, cache=TRUE}
-estimates <-  rcc:::many_lr(y[1:100], population_genotypes[1:100, ])
-j <- order(abs(estimates$beta_hat/estimates$se_hat), decreasing = TRUE)
-rank <- match(1:500, j)
-```
-
-### Marginal Confidence Intervals
-
-
-```{r, echo=FALSE}
+```{r, gendata}
+library(MASS)
 library(ggplot2)
 library(rcc)
-```
+library(rccSims)
+set.seed(1e7)
+n.samp <- 100
+n.block <- 100
 
-To construct the standard marginal 90\% confidence intervals:
-```{r marg}
-ci.naive <- cbind(estimates$beta_hat- estimates$se_hat*qnorm(0.95), estimates$beta_hat + estimates$se_hat*qnorm(0.95))
-#Overall average coverage
-sum(ci.naive[,1] <= effects & effects <= ci.naive[,2])/500
-```
-As we have seen before, these intervals disproportionately fail to cover parameters associated with top ranked estimates. Here we show the marginal intervals for the top 100 parameters colored by whether or not the true parameter is covered. Points show the true population linear effects.
-```{r plotnaive, echo=FALSE, out.width="0.5\\textwidth"}
-rcc:::plot_cis(rank, ci.naive, effects, prop=0.2, plot.truth = TRUE)
-```
-
-### Bootstrap Confidence Intervals
-Parametric bootstrap confidence intervals are constructed using the `par_bs_ci` function in the `rcc` package. This function is described in detail in the walkthrough of the example in Section 1.5 (here) so we will skip that here.
-
-```{r parci, cache=TRUE}
-ci.par <- par_bs_ci(estimates$beta_hat, se=estimates$se_hat,n.rep=1000, level=0.1)
-sum(ci.par[,1] <= effects & effects <= ci.par[,2])/500
-```
-
-Here we show the intervals for the top 100 parameters colored by whether or not the true parameter is covered by the parametric boostrap interval. Points show the true population linear effects.
-```{r plotpar, echo=FALSE, out.width="0.5\\textwidth"}
-rcc:::plot_cis(rank, ci.par, effects, prop=0.2, plot.truth = TRUE) + ggtitle("Parametric Bootstrap Intervals")
-```
-
-For the non-parametric bootstrap we resample genotypes from the sample genotype matrix, recalculate estimates and use the difference between the original estimates and the bootstrap estimates as an estimate of the bias. This procedure is described in Algorithm 3 and implemented in the `lr_bs_nonpar` function in the `rcc` package. Here is the code for the bootstrapping step:
-
-
-```{r nonpar, cache=TRUE}
-X <- population_genotypes[1:100,]
-y.sample <- y[1:100]
-B <- replicate(n=1000, expr={
-	S <- sample(1:n, size=n, replace=TRUE)
-	y.new <- y.sample[S]
-	X.new <- X[S, ]
-	b <- rcc:::many_lr(y.new, X.new)
-	#order by t-statistic
-	t.stat <- b$beta_hat/b$se_hat
-	t.stat[ b$beta_hat ==0 & b$se_hat==0] <- 0
-	k <- order(abs(t.stat), decreasing=TRUE)
-	s <- sign(t.stat[k])
-	s[t.stat[k] ==0] <- 1
-	s*(b$beta_hat[k] - estimates$beta_hat[k])
-})
-```
-
-Next we calculate the quantiles of the bias for each rank
-```{r}
-qs <- apply(B, MARGIN=1, FUN=function(x){quantile(x, probs=c(0.05, 0.9))})
-```
-And pivot:
-```{r}
-ci.nonpar <- cbind(estimates$beta_hat[j]-qs[2,], estimates$beta_hat[j]-qs[1,])
-#We are using absolute value so the pivot is different for negative estimates
-which.neg <- which(estimates$beta_hat[j] < 0)
-ci.nonpar[ which.neg , ] <- cbind(estimates$beta_hat[j][which.neg] + qs[1,which.neg],
-	                              estimates$beta_hat[j][which.neg]+qs[2,which.neg])
-
-#Put interval in the original order
-ci.nonpar <- ci.nonpar[rank,]
-sum(ci.nonpar[,1] <= effects & effects <= ci.nonpar[,2])/500
-```
-
-```{r plotnonpar, echo=FALSE, out.width="0.5\\textwidth"}
-rcc:::plot_cis(rank, ci.nonpar, effects, prop=0.2, plot.truth = TRUE) + ggtitle("Non-Parametric Bootstrap Intervals")
-```
-
-Testing new code:
-
-```{r}
-lr_func <- function(data){
-  y <- data[,1]
-  X <- data[, -1]
-  ests <- rcc:::many_lr(y, X)
-  df <- data.frame("estimate"=ests$beta_hat, "statistic"=ests$beta_hat/ests$se_hat)
-  return(df)
+#Covariance matrix for each block of features
+s <- matrix(0.3, nrow=10, ncol=10)
+diag(s) <- 1
+#Effect sizes for each feature
+beta <- list()
+#for(i in 1:n.block) beta[[i]] <- rep(c(0, rnorm(n=100), 0), c(400, rep(1, 100), 500))
+for(i in 1:n.block){
+  beta[[i]] <- rep(0, 10)
+  beta[[i]][5] <- rnorm(n=1)
 }
-data <- cbind(y[1:100], population_genotypes[1:100,])
-ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func, parallel=TRUE)$ci
-rcc:::plot_cis(rank, ci.nonpar, effects, prop=0.2, plot.truth = TRUE) + ggtitle("Non-Parametric Bootstrap Intervals")
-```
 
-## Selection Adjusted confidence intervals
-
-We calculate the selection adjusted intervals of  @Weinstein2013  and @Reid2014 conditional on selecting the top 10\% of parameters. This is very similar to the code shown for the exampl in Section 1.5.
-
-### Intervals of @Weinstein2013
-
-```{r wfb}
-t <- estimates$beta_hat/estimates$se_hat
-#effective threshold
-ct <- abs(t)[j][51]
-wfb <- lapply(t, FUN=function(x){
-	if(abs(x) < ct) return(c(NA, NA))
-	ci <- try(rcc:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
-  if(class(ci) == "try-error") return(c(NA, NA))
-	return(ci)
+#Generate correlated features
+xs <- lapply(1:n.block, FUN=function(k){
+      nk <- length(beta[[k]])
+      mvrnorm(n=n.samp, mu = rep(0, nk), Sigma = s)
 })
-ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=p)
-ci.wfb[,1] <- ci.wfb[,1]*estimates$se_hat
-ci.wfb[,2] <- ci.wfb[,2]*estimates$se_hat
-sum(ci.wfb[,1] <= effects & effects <= ci.wfb[,2], na.rm=TRUE)/50
-```
-```{r plotwfb, echo=FALSE, out.width="0.5\\textwidth"}
-
-rcc:::plot_cis(rank, ci.wfb, effects.pop$beta_hat, prop=0.2, plot.truth = TRUE) + 
-  ggtitle("Weinstein, Fithian, and Benjamini Intervals")
+X <- do.call(cbind, xs)
+#Generate outcome
+y <- X%*% unlist(beta) + rnorm(n=n.samp, sd=1)
 ```
 
+## Parameter estimation
 
-### Intervals of @Reid2014
-
-```{r rtt, cache=TRUE}
-library(selectiveInference)
-M <- manyMeans(y=t, k=50, alpha=0.1, sigma=1)
-ci.rtt <- matrix(nrow=p, ncol=2)
-ci.rtt[M$selected.set, ] <- M$ci
-ci.rtt[,1] <- ci.rtt[,1]*estimates$se_hat
-ci.rtt[,2] <- ci.rtt[,2]*estimates$se_hat
-sum(ci.rtt[,1] <= effects & effects <= ci.rtt[,2], na.rm=TRUE)/50
+For each feature, we estimate the marginal association between the feature and the outcome using linear regression. For convenience (and some efficiency gain) we use the `many_lr` function in the `rccSims` package which is a convenience utility for running many single variable linear regressions.
+```{r, estimate}
+f_marg <- rccSims:::many_lr(y,X)
+head(f_marg)
 ```
 
-```{r plotrtt, echo=FALSE, out.width="0.5\\textwidth"}
-
-rcc:::plot_cis(rank, ci.rtt, effects.pop$beta_hat, prop=0.2, plot.truth = TRUE) + 
-  ggtitle("Reid, Taylor, and Tibshirani Intervals")
+We can also calculate the true marginal association for each feature:
+```{r, truth}
+truth <-  c()
+for(k in 1:n.block){
+    truth <- c(truth, s%*%beta[[k]])
+}
+f_marg$truth <- truth
+plot(f_marg$beta, f_marg$truth, xlab="Estimate", ylab="Truth", col=rep(rep(c(1, 2, 1), c(4, 1, 5)), 10))
+abline(0, 1)
 ```
 
-## Empirical Bayes Intervals
-Here we calculate the `ashr` credible intervals of @Stephens2016. In this problem, these have under-coverage.
+## Block-Based Ranking Scheme
 
-```{r ashr, message=FALSE}
+We will use two different ranking schemes. In Section 3.1 we present results for a scheme where parameters are ranked simply on the absolute value of the test statistic. In Appendix Section 3 we discuss a ranking scheme where we first choose the most significant parameter in each block and then rank only these selected parameters. 
+
+To genmerate bootstrap confidence intervals, we will need a function that implements this block based ranking scheme:
+
+```{r}
+rank_block <- function(stats, use.abs, blocks){
+  p <- length(stats)
+  b <- unique(blocks)
+  N <- length(b)
+  if(use.abs) stats <- abs(stats)
+  rank <- rep(NA, p)
+  top_ix_block <- t(sapply(b, FUN=function(blk){
+    ix <- which(blocks==blk)
+    ixmax <- which.max(stats[ix])
+    return(c(ix[ixmax], max(stats[ix])))
+  }))
+  o <- order(top_ix_block[,2], decreasing=TRUE)
+  j <- top_ix_block[order(top_ix_block[,2], decreasing=TRUE),1]
+  rank <- match(1:p, j)
+  return(list("order"=j, "rank"=rank))
+}
+```
+In general, `par_bs_ci` and `nonpar_bs_ci` in the `rcc` package can accept any ranking function that takes test statistics as the first arguement and `use.abs` as the second argument --- `use.abs` indicates that ranking should be bsaed on the absolute value of the test statistic. The defualt ranking used by these functions is just the size of the (absolute) statistics. Ranking functions may accept additional arguments as well.
+
+Here we get both the usual ranking and the block-based ranking for our parameter estimates:
+```{r, rank}
+blocks <- rep(1:n.block, each=10)
+rnk_usual <- rcc:::basic_rank(f_marg$beta_hat/f_marg$se_hat, use.abs=TRUE)
+rnk_block <- rank_block(f_marg$beta_hat/f_marg$se_hat, use.abs=TRUE, blocks=blocks)
+f_marg$rank_block <- rnk_block$rank
+block_ix <- which(!is.na(f_marg$rank_block))
+f_marg$rank_usual <- rnk_usual$rank
+```
+
+
+
+## Naive confidince intervals
+First we calculate the naive confidence intervals which don't depend on the ranking:
+```{r, naive}
+ci.naive <- cbind(f_marg$beta_hat - f_marg$se_hat*qnorm(0.95), f_marg$beta_hat + f_marg$se_hat*qnorm(0.95))
+sum(ci.naive[,1] <= f_marg$truth & ci.naive[,2] >= f_marg$truth, na.rm=TRUE)/1000
+```
+
+Here we plot the naive intervals vs. both ranks
+```{r}
+plot_cis(f_marg$rank_usual, ci.naive, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Naive intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.naive[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Naive intervals: Block-based ranking")
+```
+
+## Parametric bootstrap
+Next we calculate parametric bootstrap confidence intervals using the usual and block-based ranking schemes. For details on how the `par_bs_ci` function works, see Algorithm 2 and Appendix Algorithm 2 in the paper. You can also refer to the walk-through for section 1.5, [here](https://github.com/jean997/rccSims/compare_cis.pdf).
+
+
+```{r, parametric}
+#Block-based
+ci.par.block <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat, rank.func = rank_block, blocks=blocks)
+mean(ci.par.block$ci[,1] <= f_marg$truth & ci.par.block$ci[,2] >= f_marg$truth, na.rm=TRUE)
+#Usual
+ci.par.usual <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat)
+mean(ci.par.usual$ci[,1] <= f_marg$truth & ci.par.usual$ci[,2] >= f_marg$truth, na.rm=TRUE)
+```
+```{r}
+plot_cis(f_marg$rank_usual, ci.par.usual$ci, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Parametric bootstrap intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.par.block$ci[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Parametric bootstrap intervals: Block-based ranking")
+```
+
+## Non-parametric bootstrap
+The non-parametric boostrap is described in Algorithm 3 of the paper and implemented in the `nonpar_bs_ci` function of the `rcc` package. To compute the non-parametric bootstrap confidence intervals, we must supply a function that calculates parameter estimates from data. In `nonpar_bs_ci`, this is the `analysis.func` argument.
+
+Here is the analysis function for our problem:
+```{r, af, cache=TRUE}
+lr_func <- function(data){
+    y <- data[,1]
+    X <- data[, -1]
+    ests <- rccSims:::many_lr(y, X, parallel=FALSE)
+    df <- data.frame("estimate"=ests$beta_hat, "se"=ests$se_hat, "statistic"=ests$beta_hat/ests$se_hat)
+    return(df)
+}
+```
+For `nonpar_bs_ci` the analysis funciton may take only one argument so we supply a data frame or matrix that has $y$ as the first column and the features as the subsequent columns. 
+
+Here we calculate the nonparametric boostrap confidence intervals using the usual and block-based ranking schemes. The `parallel` argument uses the `parallel` package to make use of multiple cores if available.
+```{r, nonpar, cache=TRUE}
+library(parallel)
+data <- cbind(y, X)
+#Usual
+ci.nonpar.usual <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, 
+                              level = 0.9, parallel=TRUE)
+mean(ci.nonpar.usual$ci[,1] <= f_marg$truth & ci.nonpar.usual$ci[,2] >= f_marg$truth, na.rm=TRUE)
+#Block-based
+ci.nonpar.block <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, rank.func = rank_block,
+                              level = 0.9, parallel=TRUE, blocks=blocks)
+mean(ci.nonpar.block$ci[,1] <= f_marg$truth & ci.nonpar.block$ci[,2] >= f_marg$truth, na.rm=TRUE)
+```
+
+```{r}
+plot_cis(f_marg$rank_usual, ci.nonpar.usual$ci, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Non-parametric bootstrap intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block$ci[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Non-parametric bootstrap intervals: Block-based ranking")
+```
+
+
+Selection adjusted intervals of @Weinstein2013 and @Reid2014 are discussed in the walk-through for Section 1.5 and they look quite similar in this case so we will skip them here. They are included in the full simulation results below. We will show `ashr` credible intervals for this problem since, in this case the true parameter values are non-sparse (we are measuring the marginal effects) which leads to worse performance for `ashr`.
+
+## Empirical Bayes credible intervals (ashr; Stephens 2016)
+
+Here we generate the `ashr` credible intervals:
+
+```{r, message=FALSE}
 library(ashr)
-ash.res <- ash(betahat = estimates$beta_hat, sebetahat = estimates$se_hat, mixcompdist = "normal")
-ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:500, trace=FALSE)
-sum(ci.ash[,1]<= effects & ci.ash[,2] >= effects)/500
+ash.res <- ash(betahat = f_marg$beta_hat, sebetahat = f_marg$se_hat, mixcompdist = "normal")
+ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:1000, trace=FALSE)
+mean(ci.ash[,1]<= f_marg$truth & ci.ash[,2] >= f_marg$truth)
 ```
 
-```{r plotash, echo=FALSE, out.width="0.5\\textwidth"}
-rcc:::plot_cis(rank, ci.ash, effects, prop=0.2, plot.truth=TRUE) + ggtitle("ashr Credible Intervals (Stephens 2016)")
+```{r}
+plot_cis(f_marg$rank_usual, ci.ash, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("ashr credible intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.ash[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("ashr credible intervals: Block-based ranking")
 ```
 
-## Replicate the results in the paper
 
-The following loop will run all of the simulations. However, because each simulation takes several minutes, it is much better to run these in parallel if that is an option. In order to facilitate running the simulations in parallel, we include the function `run1_linreg` which runs only one simulation and writes the results to a file. We will the collect all of these results into a single object and make plots.
+## Simulations in Section 3.1 and Appendix section 3
+
+Simulation results for usual ranking are shown in Section 3.1 and for block based ranking in Appendix Section 3. All of the steps in the previous section plus the intervals of  @Weinstein2013 and @Reid2014 are implemented executed by the `cluster_sim` function in the `rccSims` package. We ran 400 simulations for each of four values of $\rho$. Since these take a little bit longer to run than the example in Section 1.5 (since we include the non-parametric bootstrap), we ran the simulations simulataneously as individual jobs submitted to a large cluster and each job had it's own seed. If you didn't have access to a cluster, the following loop would generate the same results (and uses the same seeds), but we recomend running these in parallel rather than in a loop.
+
 ```{r, eval=FALSE}
 set.seed(5989615)
 all.seeds <- floor(runif(n=400, min=1000, max=1e7))
 
-for(beta.type in c("none", "ten_equal", "ten_norm", "mixture")){
-    for(i in 1:400){
-      run1_linreg_sim(beta.type=beta.type, which.run=i, file.prefix="linreg", seed=all.seeds[i])
-    }
+nblock <- 100
+beta <- list()
+for(i in 1:nblock) beta[[i]] <- rep(c(0, rnorm(n=1), 0), c(4, 1, 5))
+
+for(rho in c(-0.1, 0, 0.3, 0.8)){
+  s <- matrix(rho, nrow=10, ncol=10)
+  diag(s) <- 1
+  Sigma <- list()
+  for(i in 1:nblock) Sigma[[i]] <- s
+  for(j in 1:400){
+    results <- rccSims::cluster_sim(beta, Sigma, err.sd=1, n.samp=100, 
+                                    n.rep=1, seed=all.seeds[j], parallel=FALSE)
+    save(results, file=paste0("cw_ranking", rho, "_n", j, ".RData"))
+  }
 }
 ```
 
-Now we need to collect them all of the results:
+All of these results are included as built-in data sets to the `rccSims` package in the `lr_res` object, so you don't have to run them! `lr_res` is a list of length 4 with items corresponding to ($rho=-0.1, 0, 0.3$ and $0.8$ respectively.
 
-```{r, eval=FALSE}
-for(beta.type in c("none", "ten_equal", "ten_norm", "mixture")){
-    COVERAGE <- array(dim=c(7, 500, 400))
-    WIDTH <- array(dim=c(7, 500, 400))
-    for(i in 1:400){
-      z <- rcc:::getobj(paste0("linreg_", beta.type, "_n", i, ".RData"))
-      COVERAGE[, , i] <- z$COVERAGE
-      WIDTH[, , i] <- z$WIDTH
-    }
-    simnames <- z$simnames
-    Z <- list("COVERAGE"=COVERAGE, "WIDTH"=WIDTH, "simnames"=simnames)
-    save(Z, file=paste0("linreg_", beta.type, ".RData"))
-}
-```
-The results generated by the code in this section are available for download [here](https://github.com/jean997/rcc/sim_results).
-Here is the code for generating the plots in the paer. It should be run from the directory including the files `linreg_none.RData`, `linreg_ten_equal.RData`, `linreg_ten_norm.RData`, and `linreg_mixture.RData`. 
-
-```{r, eval=FALSE}
+Here we plot the results for the usual ranking scheme (Section 3.1):
+```{r}
 library(tidyr)
-setwd("sim_results/")
-files <- c("linreg_none.RData", "linreg_ten_equal.RData", "linreg_ten_norm.RData", "linreg_mixture.RData")
-titles <- c("No Genetic Effects", "Ten Large Effects", "Ten Small Dispersed Effects", "Combination of Large\nand Small Effects")
+data("lr_res", package="rccSims")
 covplots <- list()
 widthplots <- list()
+tpart <- paste0("=", c(-0.1, 0, 0.3, 0.8)) #For titles
 for(i in 1:4){
   lp <- "none"
-  results <- getobj(files[i])
-  covplots[[i]] <- plot_coverage(results, proportion=0.2,
+  covplots[[i]] <- plot_coverage(lr_res[[i]], proportion=0.2,
       cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
-      simnames=c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"),
-      ltys= c(2, 1, 3, 6, 4, 2), span=0.5, main=titles[i], y.range=c(-0.02, 1.02),
-      legend.position = lp) + theme(plot.title=element_text(hjust=0.5))
-  widthplots[[i]] <- plot_width(results, proportion=0.2,
+      simnames=paste0(c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"), "_basic"),
+      ltys= c(2, 1, 3, 6, 4, 2), span=0.5, y.range=c(-0.02, 1.02),
+      legend.position = lp) + theme(plot.title=element_text(hjust=0.5)) + ggtitle(bquote(rho~.(tpart[i])))
+  widthplots[[i]] <- plot_width(lr_res[[i]], proportion=0.2,
       cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
-      simnames=c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"),
-      ltys= c(2, 1, 3, 6, 4, 2), span=0.5, main=titles[i],
-      legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))
+      simnames=paste0(c("naive",  "par",    "nonpar", "ash", "wfb", "selInf1"), "_basic"),
+      ltys= c(2, 1, 3, 6, 4, 2), span=0.5,
+      legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))+ ggtitle(bquote(rho~.(tpart[i])))
 
 }
-legend <- rcc:::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
+legend <- rccSims::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
                                                  "Non-Parametric\nBootstrap", "ashr", "WFB", "RTT"), 
             cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
             ltys= c(2, 1, 3, 6, 4, 2))
 
+```
+
+
+```{r}
+covplots[[1]]
+widthplots[[1]]
+```
+
+```{r}
+covplots[[2]]
+widthplots[[2]]
+```
+
+```{r}
+covplots[[3]]
+widthplots[[3]]
+```
+
+```{r}
+covplots[[4]]
+widthplots[[4]]
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+library(gridExtra)
 h1 <- grid.arrange(covplots[[1]], covplots[[2]], covplots[[3]], covplots[[4]], ncol=4)
 h2 <- grid.arrange(widthplots[[1]], widthplots[[2]], widthplots[[3]], widthplots[[4]], ncol=4)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cov.pdf", heigh=4, width=16, units="in", dpi=300)
+ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_width.pdf", heigh=4, width=16, units="in", dpi=300)
+ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_legend.pdf", height=1, width=8, units="in", dpi=300)
 ```
+
+
+And here are plots using the block-based ranking scheme (Appendix Section 3). We don't include the selection adjusted intervals in these plots because they only consider selection schemes based on absolute value.
+```{r}
+covplots <- list()
+widthplots <- list()
+for(i in 1:4){
+  lp <- "none"
+  covplots[[i]] <- plot_coverage(lr_res[[i]], proportion=0.1,
+      cols=c("black",  "deeppink3",  "red", "gold4"),
+      simnames=paste0(c("naive",  "par",    "nonpar", "ash"), "_cw"),
+      ltys= c(2, 1, 3, 6), span=0.5, y.range=c(-0.02, 1.02),
+      legend.position = lp) + theme(plot.title=element_text(hjust=0.5)) + ggtitle(bquote(rho~.(tpart[i])))
+  widthplots[[i]] <- plot_width(lr_res[[i]], proportion=0.1,
+      cols=c("black",  "deeppink3",  "red", "gold4"),
+      simnames=paste0(c("naive",  "par",    "nonpar", "ash"), "_cw"),
+      ltys= c(2, 1, 3, 6), span=0.5,
+      legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))+ ggtitle(bquote(rho~.(tpart[i])))
+
+}
+legend <- rccSims:::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
+                                                 "Non-Parametric\nBootstrap", "ashr"), 
+            cols=c("black",  "deeppink3",  "red", "gold4"),
+            ltys= c(2, 1, 3, 6))
+
+```
+
+
+```{r}
+covplots[[1]]
+widthplots[[1]]
+```
+
+```{r}
+covplots[[2]]
+widthplots[[2]]
+```
+
+```{r}
+covplots[[3]]
+widthplots[[3]]
+```
+
+```{r}
+covplots[[4]]
+widthplots[[4]]
+```
+
 ```{r, echo=FALSE, eval=FALSE}
-ggsave(h1, file="~/Dropbox/rcc-temp/for_jcgs/img/lin_reg_cov.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(h2, file="~/Dropbox/rcc-temp/for_jcgs/img/lin_reg_width.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(legend$plot, file="~/Dropbox/rcc-temp/for_jcgs/img/lin_reg_legend.pdf", height=1, width=8, units="in", dpi=300)
+h1 <- grid.arrange(covplots[[1]], covplots[[2]], covplots[[3]], covplots[[4]], ncol=4)
+h2 <- grid.arrange(widthplots[[1]], widthplots[[2]], widthplots[[3]], widthplots[[4]], ncol=4)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_cov.pdf", heigh=4, width=16, units="in", dpi=300)
+ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_width.pdf", heigh=4, width=16, units="in", dpi=300)
+ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_legend.pdf", height=1, width=5.333, units="in", dpi=300)
 ```
-## References
