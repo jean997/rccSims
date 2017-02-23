@@ -144,7 +144,7 @@ plot_width <- function(R, simnames, cols, shapes, ltys, legend.names=NULL,
 
 }
 
-
+#'@export
 make_sim_legend <- function(legend.names, cols, ltys){
   n <- length(legend.names)
   #points <- data.frame(x=rep(1, 5), y = rev(seq(1, 3, length.out=5)))

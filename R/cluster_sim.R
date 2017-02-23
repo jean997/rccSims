@@ -1,5 +1,10 @@
+#'@import ashr
+#'@import MASS
+#'@import selectiveInference
+#'@import ggplot2
 
-#' Calculate expected coverage of several alternative intervals for
+
+#' @title Calculate expected coverage of several alternative intervals for
 #'  marginal coefficients in linear regression with clustered coefficients.
 #' @description This function can be used to generate simulations in section 3.1
 #' @param beta List of regression coefficients.
