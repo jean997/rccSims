@@ -9,7 +9,7 @@ cluster_sim(beta, Sigma, err.sd = 1, n.samp = 100, n.rep = 100,
   seed = NULL, parallel = FALSE)
 }
 \arguments{
-\item{beta}{List of regression coefficients. 
+\item{beta}{List of regression coefficients.
 This should be a least with K elements where K is the number of blocks}
 
 \item{Sigma}{List of correaltion matrices, one for each block}
