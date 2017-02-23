@@ -124,15 +124,16 @@ Next we calculate parametric bootstrap confidence intervals using the usual and 
 
 ```{r, parametric}
 #Block-based
-ci.par.block <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat, rank.func = rank_block, blocks=blocks)
-mean(ci.par.block$ci[,1] <= f_marg$truth & ci.par.block$ci[,2] >= f_marg$truth, na.rm=TRUE)
+ci.par.block <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat, 
+                          rank.func = rank_block, blocks=blocks)[, c("ci.lower", "ci.upper")]
+mean(ci.par.block[,1] <= f_marg$truth & ci.par.block[,2] >= f_marg$truth, na.rm=TRUE)
 #Usual
-ci.par.usual <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat)
-mean(ci.par.usual$ci[,1] <= f_marg$truth & ci.par.usual$ci[,2] >= f_marg$truth, na.rm=TRUE)
+ci.par.usual <- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat)[, c("ci.lower", "ci.upper")]
+mean(ci.par.usual[,1] <= f_marg$truth & ci.par.usual[,2] >= f_marg$truth, na.rm=TRUE)
 ```
 ```{r}
-plot_cis(f_marg$rank_usual, ci.par.usual$ci, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Parametric bootstrap intervals: Usual ranking")
-plot_cis(f_marg$rank_block[block_ix], ci.par.block$ci[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Parametric bootstrap intervals: Block-based ranking")
+plot_cis(f_marg$rank_usual, ci.par.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Parametric bootstrap intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.par.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Parametric bootstrap intervals: Block-based ranking")
 ```
 
 ## Non-parametric bootstrap
@@ -156,17 +157,17 @@ library(parallel)
 data <- cbind(y, X)
 #Usual
 ci.nonpar.usual <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, 
-                              level = 0.9, parallel=TRUE)
-mean(ci.nonpar.usual$ci[,1] <= f_marg$truth & ci.nonpar.usual$ci[,2] >= f_marg$truth, na.rm=TRUE)
+                              level = 0.9, parallel=TRUE)[, c("ci.lower", "ci.upper")]
+mean(ci.nonpar.usual[,1] <= f_marg$truth & ci.nonpar.usual[,2] >= f_marg$truth, na.rm=TRUE)
 #Block-based
 ci.nonpar.block <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, rank.func = rank_block,
-                              level = 0.9, parallel=TRUE, blocks=blocks)
-mean(ci.nonpar.block$ci[,1] <= f_marg$truth & ci.nonpar.block$ci[,2] >= f_marg$truth, na.rm=TRUE)
+                              level = 0.9, parallel=TRUE, blocks=blocks)[, c("ci.lower", "ci.upper")]
+mean(ci.nonpar.block[,1] <= f_marg$truth & ci.nonpar.block[,2] >= f_marg$truth, na.rm=TRUE)
 ```
 
 ```{r}
-plot_cis(f_marg$rank_usual, ci.nonpar.usual$ci, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Non-parametric bootstrap intervals: Usual ranking")
-plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block$ci[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Non-parametric bootstrap intervals: Block-based ranking")
+plot_cis(f_marg$rank_usual, ci.nonpar.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab("Usual Rank") + ggtitle("Non-parametric bootstrap intervals: Usual ranking")
+plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab("Block Rank") + ggtitle("Non-parametric bootstrap intervals: Block-based ranking")
 ```
 
 

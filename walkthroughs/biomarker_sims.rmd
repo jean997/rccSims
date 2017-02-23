@@ -121,19 +121,21 @@ Here we calculate the non-parametrci bootstrap confidence intervals (Algorithm 3
 library(parallel)
 library(rcc)
 ci.nonpar <- nonpar_bs_ci(data=mydata, analysis.func=analysis.func, n.rep=500, parallel=TRUE)
-sum(ci.nonpar$ci[,1] <= stats$truth & stats$truth <= ci.nonpar$ci[,2])/n.cutpoints
+head(ci.nonpar)
+ci.nonpar <- ci.nonpar[, c("ci.lower", "ci.upper")]
+sum(ci.nonpar[,1] <= stats$truth & stats$truth <= ci.nonpar[,2])/n.cutpoints
 ```
 
 
 Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.
 ```{r}
 library(rccSims)
-plot_cis(stats$rank, ci.nonpar$ci, stats$truth, plot.truth=TRUE) + 
+plot_cis(stats$rank, ci.nonpar, stats$truth, plot.truth=TRUE) + 
   ggtitle("Non-Parametric Bootstrap Confidence Intervals")
 ```
 Here they are plotted versus cutpoint:
 ```{r}
-plot_cis(cutpoints, ci.nonpar$ci, stats$truth, plot.truth=TRUE) + 
+plot_cis(cutpoints, ci.nonpar, stats$truth, plot.truth=TRUE) + 
   ggtitle("Non-Parametric Bootstrap Confidence Intervals") + xlab("Cutpoint")
 ```
 
@@ -144,16 +146,16 @@ plot_cis(cutpoints, ci.nonpar$ci, stats$truth, plot.truth=TRUE) +
 
 We could instead use the parametric bootstrap (Algorithm 2 and Supplemental Algorithm 2):
 ```{r parboot}
-ci.par <- rcc::par_bs_ci(beta=stats$beta, se=stats$se, n=500, use.abs=TRUE)
+ci.par <- rcc::par_bs_ci(beta=stats$beta, se=stats$se, n=500, use.abs=TRUE)[, c("ci.lower", "ci.upper")]
 ```
 Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.
 ```{r}
-plot_cis(stats$rank, ci.par$ci, stats$truth, plot.truth=TRUE) + 
+plot_cis(stats$rank, ci.par, stats$truth, plot.truth=TRUE) + 
   ggtitle("Parametric Bootstrap Confidence Intervals")
 ```
 Here they are plotted versus cut-point:
 ```{r}
-plot_cis(cutpoints, ci.par$ci, stats$truth, plot.truth=TRUE) + 
+plot_cis(cutpoints, ci.par, stats$truth, plot.truth=TRUE) + 
   ggtitle("Parametric Bootstrap Confidence Intervals") + xlab("Cutpoint")
 ```
 

@@ -220,8 +220,9 @@ For comparison, here is how to get the same intervals using the `rcc` package.
 ```{r}
 set.seed(13421)
 ci.boot2 <- rcc::par_bs_ci(beta=Z, n.rep=500)
-head(ci.boot2$ci)
-all.equal(ci.boot2$ci, ci.boot)
+head(ci.boot2)
+all.equal(ci.boot2$ci.lower, ci.boot[,1])
+all.equal(ci.boot2$ci.upper, ci.boot[,2])
 ```
 
 Here are the parametric bootstrap intervals for all ranks:
@@ -257,7 +258,7 @@ The difference between the observed average coverage at each rank and the nomina
 
 ```{r, cache=TRUE}
 oracle.coverage <- apply(zsim, MARGIN=2, FUN=function(zz){
-  ci <- rcc::par_bs_ci(beta=zz, theta=theta)$ci
+  ci <- rcc::par_bs_ci(beta=zz, theta=theta)[, c("ci.lower", "ci.upper")]
   covered <- (ci[,1] <= theta & ci[,2] >= theta)
   return(covered)
 })

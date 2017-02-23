@@ -55,14 +55,15 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100,
     j <- order(abs(stats$statistic), decreasing = TRUE)
 
     #Non parametric bootstrap
-    ci.nonpar <- nonpar_bs_ci(data=mydata, analysis.func=analysis.func, n.rep=500, parallel=parallel, level=0.9)
-    COVERAGE[which(simnames=="nonpar"), ,i] <- (ci.nonpar$ci[,1] < stats$truth & stats$truth < ci.nonpar$ci[,2])[j]
-    WIDTH[which(simnames=="nonpar"), , i] <- (ci.nonpar$ci[,2] -ci.nonpar$ci[,1])[j]
+    ci.nonpar <- nonpar_bs_ci(data=mydata, analysis.func=analysis.func,
+                              n.rep=500, parallel=parallel, level=0.9)[, c("ci.lower", "ci.upper")]
+    COVERAGE[which(simnames=="nonpar"), ,i] <- (ci.nonpar[,1] < stats$truth & stats$truth < ci.nonpar[,2])[j]
+    WIDTH[which(simnames=="nonpar"), , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[j]
 
     #Parametric bootstrap
-    ci.par <- par_bs_ci(stats$estimate, stats$se, n=500, level=0.9, use.abs=TRUE)
-    COVERAGE[which(simnames=="par"), ,i] <- (ci.par$ci[,1] < stats$truth & stats$truth < ci.par$ci[,2])[j]
-    WIDTH[which(simnames=="par"), , i] <- (ci.par$ci[,2]-ci.par$ci[,1])[j]
+    ci.par <- par_bs_ci(stats$estimate, stats$se, n=500, level=0.9, use.abs=TRUE)[, c("ci.lower", "ci.upper")]
+    COVERAGE[which(simnames=="par"), ,i] <- (ci.par[,1] < stats$truth & stats$truth < ci.par[,2])[j]
+    WIDTH[which(simnames=="par"), , i] <- (ci.par[,2]-ci.par[,1])[j]
 
     #WFB CIs conditional on taking the top 10%
     ct <- quantile(abs(stats$statistic), probs=0.9)

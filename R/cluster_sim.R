@@ -2,7 +2,7 @@
 #' Calculate expected coverage of several alternative intervals for
 #'  marginal coefficients in linear regression with clustered coefficients.
 #' @description This function can be used to generate simulations in section 3.1
-#' @param beta List of regression coefficients. 
+#' @param beta List of regression coefficients.
 #' This should be a least with K elements where K is the number of blocks
 #' @param which.sample Indices of individuals who are sampled
 #' @param Sigma List of correaltion matrices, one for each block
@@ -17,16 +17,16 @@
 #'@export
 cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL, parallel=FALSE){
   if(!is.null(seed)) set.seed(seed)
-  
+
   lr_func <- function(data){
     y <- data[,1]
     X <- data[, -1]
-    ests <- rcc:::many_lr(y, X, parallel=FALSE)
+    ests <- many_lr(y, X, parallel=FALSE)
     df <- data.frame("estimate"=ests$beta_hat, "se"=ests$se_hat, "statistic"=ests$beta_hat/ests$se_hat)
     return(df)
   }
-  
-  
+
+
   rank_block <- function(stats, use.abs, blocks){
     p <- length(stats)
     b <- unique(blocks)
@@ -43,7 +43,7 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
     rank <- match(1:p, j)
     return(list("order"=j, "rank"=rank))
   }
-  
+
   K <- length(beta)
   stopifnot(length(Sigma) ==K)
   nK <- sapply(beta, FUN=length)
@@ -51,7 +51,7 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
   stopifnot(all(nK == sapply(Sigma, FUN=ncol)))
   p <- length(unlist(beta))
   blocks <- rep(1:K, nK)
-  
+
   effects <- c()
   for(k in 1:K){
     effects <- c(effects, Sigma[[k]]%*%beta[[k]])
@@ -60,7 +60,7 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
   ixs <- list(1:p, 1:K)
   simnames <- c("nonpar", "par", "wfb", "wfb2", "naive", "selInf1", "ash")
   simnames <- unlist(lapply(nms, FUN=function(nm){paste0(simnames, "_", nm)}))
- 
+
   COVERAGE <- array(dim=c(length(simnames), p, n.rep))
   WIDTH <- array(dim=c(length(simnames),  p, n.rep))
   i <- 1
@@ -81,30 +81,32 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
     rk.cw <- rank_block(stats=res.orig$statistic, use.abs=TRUE, blocks=blocks)
     orders <- list(rk.basic$order, rk.cw$order)
     cat("Got effect sizes.\n")
-    
+
     #Non parametric bootstrap - basic
-    ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, res.orig=res.orig, level = 0.9, parallel=parallel)$ci
+    ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000,
+                              res.orig=res.orig, level = 0.9, parallel=parallel)[, c("ci.lower", "ci.upper")]
     COVERAGE[which(simnames=="nonpar_basic"), ,i] <- (ci.nonpar[,1] < effects & effects < ci.nonpar[,2])[rk.basic$order]
     WIDTH[which(simnames=="nonpar_basic"), , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[rk.basic$order]
-    
-    
+
+
     #Non parametric bootstrap - cw
     ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, rank.func = rank_block,
-                              res.orig=res.orig, level = 0.9, parallel=parallel, blocks=blocks)$ci
+                              res.orig=res.orig, level = 0.9, parallel=parallel, blocks=blocks)[, c("ci.lower", "ci.upper")]
     COVERAGE[which(simnames=="nonpar_cw"), 1:K,i] <- (ci.nonpar[,1] < effects & effects < ci.nonpar[,2])[rk.cw$order]
     WIDTH[which(simnames=="nonpar_cw"), 1:K , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[rk.cw$order]
-    
-    
+
+
     #Parametric bootstrap - basic
-    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9)$ci
+    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9)[, c("ci.lower", "ci.upper")]
     COVERAGE[which(simnames=="par_basic"), ,i] <- (ci.par[,1] < effects & effects < ci.par[,2])[rk.basic$order]
     WIDTH[which(simnames=="par_basic"), , i] <- (ci.par[,2] -ci.par[,1])[rk.basic$order]
-    
+
     #Parametric bootstrap - cw
-    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9, rank.func = rank_block, blocks=blocks)$ci
+    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9,
+                        rank.func = rank_block, blocks=blocks)[, c("ci.lower", "ci.upper")]
     COVERAGE[which(simnames=="par_cw"), 1:K ,i] <- (ci.par[,1] < effects & effects < ci.par[,2])[rk.cw$order]
     WIDTH[which(simnames=="par_cw"), 1:K, i] <- (ci.par[,2] -ci.par[,1])[rk.cw$order]
-    
+
     #WFB CIs conditional on taking the top 10%
     t <- res.orig$estimate/res.orig$se
     ct <- abs(t)[rk.basic$order][floor(0.1*p) + 1]
@@ -122,7 +124,7 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
       COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.wfb[,1] < effects & effects < ci.wfb[,2])[orders[[jj]]]
       WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.wfb[,2] -ci.wfb[,1])[orders[[jj]]]
     }
-    
+
     #Naive ci
     ci.naive <- cbind(res.orig$estimate - res.orig$se*qt(0.95, df=p-1),
                       res.orig$estimate + res.orig$se*qt(0.95, df=p-1))
@@ -130,8 +132,8 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
       nm <- paste0("naive_", nms[jj])
       COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.naive[,1] < effects & effects < ci.naive[,2])[orders[[jj]]]
       WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.naive[,2] -ci.naive[,1])[orders[[jj]]]
-    }    
-    
+    }
+
     #Reid, Taylor, Tibshirani method (selectiveInference)
     M <- manyMeans(y=t, k=0.1*p, alpha=0.1, sigma=1)
     ci.rtt1 <- matrix(nrow=p, ncol=2)
@@ -143,7 +145,7 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
       COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.rtt1[,1] < effects & effects < ci.rtt1[,2])[orders[[jj]]]
       WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.rtt1[,2] -ci.rtt1[,1])[orders[[jj]]]
     }
-    
+
     #ashr credible intervals
     ash.res <- ash(betahat = res.orig$estimate, sebetahat = res.orig$se, mixcompdist = "normal")
     ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:p, trace=FALSE)
@@ -152,11 +154,11 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
       COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.ash[,1] < effects & effects < ci.ash[,2])[orders[[jj]]]
       WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.ash[,2] -ci.ash[,1])[orders[[jj]]]
     }
-    
+
     i <- i+1
-    
+
   }
-  
+
   cat("\n")
   return(list("COVERAGE"=COVERAGE,  "WIDTH"=WIDTH, "simnames"=simnames))
 }

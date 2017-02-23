@@ -29,12 +29,12 @@ example_sim <- function(theta, n=200, use.abs=TRUE){
     jinv <- match(1:p, j)
     THETA[,i] <- theta[j]
     #Parametric Bootstrap
-    ci <- par_bs_ci(beta=z, theta=z, use.abs=use.abs, n=1000)$ci
+    ci <- par_bs_ci(beta=z, theta=z, use.abs=use.abs, n=1000)[, c("ci.lower", "ci.upper")]
     COVERAGE[simnames == "par", ,i]<- ci[j,1] <= theta[j] & ci[j,2] >= theta[j]
 		WIDTH[simnames=="par", , i] <- (ci[, 2] - ci[,1])[j]
 
     #Oracle
-		ci <- par_bs_ci(beta=z, theta=theta, use.abs=use.abs, n=1000)$ci
+		ci <- par_bs_ci(beta=z, theta=theta, use.abs=use.abs, n=1000)[, c("ci.lower", "ci.upper")]
     COVERAGE[simnames == "oracle", ,i]<- ci[j,1] <= theta[j] & ci[j,2] >= theta[j]
 		WIDTH[simnames=="oracle", , i] <- (ci[, 2] - ci[,1])[j]
     #Naive
