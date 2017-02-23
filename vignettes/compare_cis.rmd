@@ -244,7 +244,7 @@ Looking at the average coverage over 100 data sets we see that the parametric bo
 
 ```{r}
 system.time(boot.coverage <- apply(zsim, MARGIN=2, FUN=function(zz){
-  ci <- rcc::par_bs_ci(beta=zz)$ci
+  ci <- rcc::par_bs_ci(beta=zz)[, c("ci.lower", "ci.upper")]
   covered <- (ci[,1] <= theta & ci[,2] >= theta)
   return(covered)
 }))
