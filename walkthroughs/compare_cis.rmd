@@ -112,7 +112,7 @@ For the  @Weinstein2013 intervals, we use code that accompanied that paper. This
 ct <- abs(Z[rank==101])
 wfb <- lapply(Z, FUN=function(x){
 			  if(abs(x) < ct) return(c(NA, NA))
-			  ci <- try(rccSims::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+			  ci <- try(rccSims:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
 			  if(class(ci) == "try-error") return(c(NA, NA)) #Sometimes WFB code produces errors
 			  return(ci)
 			 })
@@ -130,7 +130,7 @@ system.time(wfb.coverage <- apply(zsim, MARGIN=2, FUN=function(zz){
   ct <- abs(zz[j][101])
   wfb <- lapply(zz[j][1:100], FUN=function(x){
 			  if(abs(x) < ct) return(c(NA, NA))
-			  ci <- try(rccSims::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+			  ci <- try(rccSims:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
 			  if(class(ci) == "try-error") return(c(NA, NA)) #Sometimes WFB code produces errors
 			  return(ci)
 			 })

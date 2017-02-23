@@ -184,7 +184,7 @@ Here are the selection adjusted intervals of the intervals of  @Weinstein2013 af
 ct <- abs(stats$tstat[stats$rank==11])
 wfb <- lapply(stats$tstat, FUN=function(x){
 			  if(abs(x) < ct) return(c(NA, NA))
-			  ci <- try(rccSims::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+			  ci <- try(rccSims:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
 			  if(class(ci) == "try-error") return(c(NA, NA)) #Sometimes WFB code produces errors
 			  return(ci)
 			 })
@@ -218,7 +218,7 @@ This method gives the 10th ranked parameter an very short confidence interval!
 
 ### Empirical Bayes Confidence Intervals
 
-Here are the credible intervals we get out of ashr (@stephens2016)
+Here are the credible intervals we get out of ashr (@Stephens2016)
 
 ```{r, message=FALSE}
 library(ashr)
