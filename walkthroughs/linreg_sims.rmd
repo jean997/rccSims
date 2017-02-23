@@ -3,6 +3,7 @@ title: "Linear regression with correlated predictors"
 author: "Jean Morrison"
 date: "January 3, 2017"
 output: pdf_document
+bibliography: ci_bib.bib
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -173,9 +174,9 @@ plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block[block_ix,], f_marg$truth[b
 
 Selection adjusted intervals of @Weinstein2013 and @Reid2014 are discussed in the walk-through for Section 1.5 and they look quite similar in this case so we will skip them here. They are included in the full simulation results below. We will show `ashr` credible intervals for this problem since, in this case the true parameter values are non-sparse (we are measuring the marginal effects) which leads to worse performance for `ashr`.
 
-## Empirical Bayes credible intervals (ashr; Stephens 2016)
+## Empirical Bayes credible intervals (ashr; Stephens, 201)
 
-Here we generate the `ashr` credible intervals:
+Here we generate the `ashr` credible intervals of @Stephens2016:
 
 ```{r, message=FALSE}
 library(ashr)
