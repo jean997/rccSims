@@ -4,10 +4,23 @@ Title: Replicate simulations in "Rank conditional coverage and confidence interv
 Version: 0.1.0
 Author: Jean Morrison
 Maintainer: Jean Morrison <jeanm@uchicago.edu>
-Description: This package and its vignettes can be used to replicate the simulations found in "Rank conditional coverage and confidence intervals in high dimensional problems" by Jean Morrison and Noah Simon. There are three sets of simulations: the example in Section 1.5, linear regression simulations in 3.1 and biomarker simulations in 3.2. This package comes with three vignettes that walkthrough each of these simulations.
-License: What license is it under?
+Description: Replicate the simulations found in "Rank conditional coverage and confidence 
+    intervals in high dimensional problems" by Jean Morrison and Noah Simon. 
+    There are three sets of simulations: the example in Section 1.5, 
+    linear regression simulations in 3.1 and biomarker simulations in 3.2. 
+    This package comes with three vignettes that walkthrough each of these simulations.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Imports:
+    ggplot2,
+    ashr,
+    selectiveInference,
+    MASS,
+    tidyr
 URL: http://github.com/jean997/rccSims
 BugReports: http://github.com/jean997/rccSims/issues
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
