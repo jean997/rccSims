@@ -5,7 +5,7 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
   set.seed(seed)
   #example_params is the data set used for the simple example in figure 1.
   #For this figure we use the second column which is a vector of normally distributed true effects
-  
+
   #Step 1 - generate 500 data sets of bootstrap observations
   X <- replicate(n=500, expr = rnorm(n=1000, mean=example_params[,2], sd=1))
   #Identify which parameter corresponds to the observation with rank idx
@@ -27,7 +27,7 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
     names(dat)=c("sample", "theta")
     t1hat <- sort(X[,i], decreasing=TRUE)[idx]
     t1 <- example_params[order(X[,i], decreasing=TRUE)[idx],2]
-    
+
     ss2 <- paste0("(", idx, ")")
     ss <- paste0(i, ",")
     my.at <- c(t1, t1hat)
@@ -41,7 +41,7 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
       geom_density(aes(sample), lty=0, fill="purple", alpha=0.3) +
       geom_segment(x=t1hat, xend=t1hat, y=0, yend=1) + geom_segment(x=t1, xend=t1, y=0, yend=1, lty=2) +
       geom_segment(x=t1hat, xend=t1, y=0.05, yend=0.05, lty=3) +
-      ylab("Density") + xlab("Bootstrapped statistics") + 
+      ylab("Density") + xlab("Bootstrapped statistics") +
       scale_x_continuous(breaks=my.at,
                          limits=range(X[, 1:n]),
                          labels=c( as.expression(bquote(theta["s"[.(i)]~.(ss2)])),
@@ -50,10 +50,10 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
             panel.grid.minor=element_blank(), panel.grid.major = element_blank(),
             axis.ticks = element_blank(), rect=element_blank(),
             axis.text.x=element_text(size=0.8*axis.text.size),
-            axis.title = element_text(size=axis.labs.size), 
+            axis.title = element_text(size=axis.labs.size),
             plot.title=element_text(size=title.size, hjust=0.5)
-            ) 
-      
+            )
+
     if(i==1) h <- h + ggtitle("Step 1: Sample from G")
     ret[[i]] <- h
 
@@ -78,7 +78,7 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
     geom_segment(x=0, xend=qs[1], y=0.1, yend=0.1, col="violetRed", lty=1, lwd=lwd) +
     geom_segment(x=0, xend=qs[2], y=0.13, yend=0.13, col="violetRed", lty=1, lwd=lwd) +
     geom_segment(x=0, xend=qs[2], y=0.13, yend=0.13, col="violetred1", lty=2, lwd=lwd) +
-    xlab(bquote(~tilde(delta)[.(ss)])) + ylab("Density") + 
+    xlab(bquote(~tilde(delta)[.(ss)])) + ylab("Density") +
     scale_x_continuous(breaks=my.at,
                      limits=c(min(0, min(delta)), max(delta)),
                      labels=c("0", as.expression(bquote(tilde(H)[.(ss)]^"-1"~"(0.05)")),
@@ -87,7 +87,7 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
         panel.grid.minor=element_blank(), panel.grid.major = element_blank(),
         axis.ticks = element_blank(), rect=element_blank(),
         axis.title = element_text(size=axis.labs.size),
-        axis.text.x=element_text(size=axis.text.size, vjust =0.5), 
+        axis.text.x=element_text(size=axis.text.size, vjust =0.5),
         plot.title=element_text(size=title.size, hjust=0.5))
 
 
@@ -121,15 +121,25 @@ make_alg_plots <- function(seed, idx = 1, n=3, lwd =2, text.size=7,
     scale_x_continuous(breaks=c(0,  t1,  t1hat), limits=R,
                      labels=c("0", as.expression(bquote(theta[.(si)])),
                       as.expression(bquote(hat(theta)[.(si)])))) +
-    theme(axis.title=element_blank(), 
-          axis.text.y = element_blank(), 
+    theme(axis.title=element_blank(),
+          axis.text.y = element_blank(),
           rect = element_blank(),
-          panel.grid.minor=element_blank(), 
+          panel.grid.minor=element_blank(),
           panel.grid.major = element_blank(),
-          axis.ticks= element_blank(), 
-          axis.text.x=element_text(size=axis.text.size), 
+          axis.ticks= element_blank(),
+          axis.text.x=element_text(size=axis.text.size),
           plot.title=element_text(size=title.size, hjust=0.5))
 
   return(ret)
 }
 
+#h1 <- rccSims:::make_alg_plots(seed=1e7, idx=1)
+#g1 <- grid.arrange(h1[[1]], h1[[2]], h1[[3]], ncol=1)
+#gtotal1 <- grid.arrange(g1, h1[[4]], h1[[5]], ncol=3)
+#ggsave(gtotal1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/alg_plot1.png",
+#       height=5, width=15, units="in", dpi=300)
+#h100 <-rccSims:::make_alg_plots(seed=1e7, idx=100)
+#g100 <- grid.arrange(h100[[1]], h100[[2]], h100[[3]], ncol=1)
+#gtotal100 <- grid.arrange(g100, h100[[4]], h100[[5]], ncol=3)
+#ggsave(gtotal100, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/alg_plot100.png",
+#       height=5, width=15, units="in", dpi=300)
