@@ -220,7 +220,6 @@ All of these results are included as built-in data sets to the `rccSims` package
 
 Here we plot the results for the usual ranking scheme (Section 3.1):
 ```{r}
-library(tidyr)
 data("lr_res", package="rccSims")
 covplots <- list()
 widthplots <- list()
@@ -240,7 +239,7 @@ for(i in 1:4){
 
 }
 legend <- rccSims::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
-                                                 "Non-Parametric\nBootstrap", "ashr", "WFB", "RTT"), 
+                                                 "Non-Parametric\nBootstrap", "ash", "WFB", "RTT"), 
             cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),
             ltys= c(2, 1, 3, 6, 4, 2))
 
@@ -272,13 +271,13 @@ widthplots[[4]]
 library(gridExtra)
 h1 <- grid.arrange(covplots[[1]], covplots[[2]], covplots[[3]], covplots[[4]], ncol=4)
 h2 <- grid.arrange(widthplots[[1]], widthplots[[2]], widthplots[[3]], widthplots[[4]], ncol=4)
-ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cov.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_width.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_legend.pdf", height=1, width=8, units="in", dpi=300)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cov.png", height=4, width=16, units="in", dpi=300)
+ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_width.png", height=4, width=16, units="in", dpi=300)
+ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_legend.png", height=1, width=8, units="in", dpi=300)
 ```
 
 
-And here are plots using the block-based ranking scheme (Appendix Section 3). We don't include the selection adjusted intervals in these plots because they only consider selection schemes based on absolute value.
+Here are plots using the block-based ranking scheme (Appendix Section 3). We don't include the selection adjusted intervals in these plots because they only consider selection schemes based on absolute value.
 ```{r}
 covplots <- list()
 widthplots <- list()
@@ -327,7 +326,7 @@ widthplots[[4]]
 ```{r, echo=FALSE, eval=FALSE}
 h1 <- grid.arrange(covplots[[1]], covplots[[2]], covplots[[3]], covplots[[4]], ncol=4)
 h2 <- grid.arrange(widthplots[[1]], widthplots[[2]], widthplots[[3]], widthplots[[4]], ncol=4)
-ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_cov.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_width.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_legend.pdf", height=1, width=5.333, units="in", dpi=300)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_cov.png", heigh=4, width=16, units="in", dpi=300)
+ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_width.png", heigh=4, width=16, units="in", dpi=300)
+ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/blocks_cw_legend.png", height=1, width=5.333, units="in", dpi=300)
 ```

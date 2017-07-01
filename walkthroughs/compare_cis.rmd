@@ -352,7 +352,6 @@ These results are also included as a built-in data set to the `rccSims` package.
 Now we can make plots using the `plot_coverage` and `plot_width` functions in the `rccSims` package. 
 
 ```{r}
-library(tidyr)
 data("sim.list", package="rccSims")
 covplots <- list()
 widthplots <- list()
@@ -371,7 +370,7 @@ for(i in 1:4){
         legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))
 }
 legend <- rccSims:::make_sim_legend(legend.names = c("Marginal", "Parametric\nBootstrap", 
-                                                 "Oracle", "ashr", "WFB", "RTT"), 
+                                                 "Oracle", "ash", "WFB", "RTT"), 
               cols=c("black",  "deeppink3",  "blue", "gold4", "forestgreen", "purple"),
               ltys= c(2, 1, 3, 6, 4, 2))
 ```
@@ -400,9 +399,9 @@ widthplots[[4]]
 library(gridExtra)
 h1 <- grid.arrange(covplots[[1]], covplots[[2]], covplots[[3]], covplots[[4]], ncol=4)
 h2 <- grid.arrange(widthplots[[1]], widthplots[[2]], widthplots[[3]], widthplots[[4]], ncol=4)
-ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_cov.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_width.pdf", heigh=4, width=16, units="in", dpi=300)
-ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_legend.pdf", height=1, width=8, units="in", dpi=300)
+ggsave(h1, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_cov.png", heigh=4, width=16, units="in", dpi=300)
+ggsave(h2, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_width.png", heigh=4, width=16, units="in", dpi=300)
+ggsave(legend$plot, file="~/Dropbox/Confidence_Intervals/for_jcgs/img/example_legend.png", height=1, width=8, units="in", dpi=300)
 ```
 
 
