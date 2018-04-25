@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Jean Morrison" />
+
+
+<title>Treatment Effects in Nested Subgroups (Section 3.2)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">rccSims</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Treatment Effects in Nested Subgroups (Section 3.2)</h1>
+<h4 class="author"><em>Jean Morrison</em></h4>
+<h4 class="date"><em>January 1, 2017</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-04-25</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180425)</code> </summary></p>
+<p>The command <code>set.seed(20180425)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/c386af2b56d90b5d3682649b3815de30a3c60d33" target="_blank">c386af2</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  .Rbuildignore
+    Untracked:  R/get_fcr.R
+    Untracked:  analysis/biomarker_sims_cache/
+    Untracked:  analysis/ci_bib.bib
+    Untracked:  analysis/compare_cis_cache/
+    Untracked:  analysis/compare_cis_temp.Rmd
+    Untracked:  analysis/compare_cis_temp_cache/
+    Untracked:  analysis/linreg_sims.rmd
+    Untracked:  analysis/linreg_sims_cache/
+    Untracked:  data/sim.list.new.rda
+    Untracked:  temp.RData
+    Untracked:  walkthroughs/biomarker_sims_cache/
+    Untracked:  walkthroughs/biomarker_sims_files/
+    Untracked:  walkthroughs/ci_bib_small.bib
+    Untracked:  walkthroughs/compare_cis_cache/
+    Untracked:  walkthroughs/compare_cis_files/
+    Untracked:  walkthroughs/linreg_sims_cache/
+    Untracked:  walkthroughs/linreg_sims_files/
+
+Unstaged changes:
+    Modified:   NAMESPACE
+    Modified:   walkthroughs/ci_bib.bib
+    Modified:   walkthroughs/compare_cis.rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/c386af2b56d90b5d3682649b3815de30a3c60d33/analysis/biomarker_sims.rmd" target="_blank">c386af2</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/biomarker_sims.rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="simulation-set-up" class="section level2">
+<h2>Simulation Set-up</h2>
+<p>Here we imagine data from a clinical trial examining the effect of a a treatment on an outcome <span class="math inline">\(Y\)</span>. For each participant we have also collected a biomarker <span class="math inline">\(W\)</span> and suspect that the treatment has a greater effect for patients with larger values of <span class="math inline">\(W\)</span>. We are interested in establishing a cut-point in <span class="math inline">\(W\)</span> to guide enrolment of a future trial so we will estimate the treatment effect in subgroups defined by the biomarker.</p>
+<p>The true relationship between <span class="math inline">\(Y\)</span>, the treatment, and the biomarker is given by <span class="math display">\[
+E[Y | trt, W] = \begin{cases}
+ 0 \qquad &amp; W &lt; 0.5\\
+\frac{1}{2}\cdot trt &amp; W \geq 0.5
+\end{cases}.
+\]</span> For participant <span class="math inline">\(i\)</span>, the observed value of <span class="math inline">\(Y\)</span> is <span class="math inline">\(Y_i = E[Y | W_i, trt_i] + \epsilon\)</span> where <span class="math inline">\(\epsilon\sim N(0, 1/4)\)</span>.</p>
+<p>In each simulation, we generate data for 400 participants — 200 in each treatment arm. The vlaue of the biomarker is uniformly distributed between 0 and 1. Below, we generate data for one simulation:</p>
+<pre class="r"><code>library(ggplot2)
+library(rcc)
+library(rccSims)
+library(tidyr)
+library(ashr)
+library(parallel)
+library(selectiveInference)
+library(gridExtra)
+
+set.seed(1e7)
+n &lt;- 2*200
+mean_outcome &lt;- function(x, trt){
+  if(x &lt; 0.5) return(0)
+  return(0.5*trt)
+}
+dat &lt;- data.frame(&quot;trt&quot;=rep(c(0, 1), each=n/2), &quot;w&quot;=runif(n=n))
+dat$Ey &lt;- apply(dat, MARGIN=1, FUN=function(z){mean_outcome(z[2],z[1])})
+dat$y &lt;- rnorm(n=n, mean=dat$Ey, sd=0.5)
+dat$trt &lt;- as.factor(dat$trt)
+ggplot(dat) + geom_line(aes(x=w, y=Ey, group=trt, col=trt)) + 
+  geom_point(aes(x=w, y=y, col=trt, group=trt)) + 
+  ylab(&quot;E[Y]&quot;) + theme_bw() + theme(panel.grid = element_blank())</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-1-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>We will consider 100 cutopoints between 0.1 and 0.9, <span class="math inline">\(w_1, \dots, w_{100}\)</span>. For each cutpoint, <span class="math inline">\(j \in 1, \dots, 100\)</span>, we estimate the difference in average treatment effect for individuals above and below the cutpoint: <span class="math display">\[ \beta_j = (E[Y | trt=1, W \geq w_j] - E[Y | trt=0, W \geq w_j])- (E[Y | trt=1, W &lt; w_j] - E[Y | trt=0, W &lt; w_j])\]</span></p>
+<p>We can estimate <span class="math inline">\(\beta_j\)</span> by fitting the parameters in the regression</p>
+<p><span class="math display">\[
+Y = \beta_0 + \alpha_1 trt + \alpha_2 1_{W &gt; w_j} + \beta_j trt 1_{W &gt; w_j} + \epsilon
+\]</span> by least squares. Calculating <span class="math inline">\(\hat{\beta}_j\)</span> for each cutpoint:</p>
+<pre class="r"><code>n.cutpoints &lt;- 100
+cutpoints &lt;- seq(0.1, 0.9, length.out=n.cutpoints)
+#Indicator variables
+ix &lt;- sapply(cutpoints, FUN=function(thresh){as.numeric(dat$w &gt;= thresh)})
+#Run the linear regressions
+stats &lt;- apply(ix, MARGIN=2, FUN=function(ii){
+      f &lt;- lm(y~trt*ii, data=dat)
+      summary(f)$coefficients[4, 1:3]
+    })
+stats &lt;- data.frame(matrix(unlist(stats), byrow=TRUE, ncol=3))
+names(stats) &lt;- c(&quot;beta&quot;, &quot;se&quot;, &quot;tstat&quot;)
+stats$cutpoint &lt;- cutpoints
+j &lt;- order(abs(stats$tstat), decreasing=TRUE)
+stats$rank &lt;- match(1:nrow(stats), j)
+head(stats)</code></pre>
+<pre><code>       beta        se    tstat  cutpoint rank
+1 0.3857081 0.1694744 2.275907 0.1000000   58
+2 0.4327279 0.1639602 2.639225 0.1080808   50
+3 0.4194834 0.1570891 2.670354 0.1161616   47
+4 0.3477664 0.1529919 2.273104 0.1242424   60
+5 0.3417814 0.1501157 2.276786 0.1323232   57
+6 0.3852470 0.1489406 2.586582 0.1404040   52</code></pre>
+<p>The true value of <span class="math inline">\(\beta_j\)</span> is <span class="math display">\[0.5*\frac{min(1-w_j, 0.5)}{(1-w_j)} - 0.5\frac{max(0, w_j-0.5)}{w_j}\]</span></p>
+<pre class="r"><code>stats$truth &lt;-sapply(cutpoints, FUN=function(wj){
+  0.5*(min(1-wj, 0.5)/(1-wj)) - 0.5*max(0, wj-0.5)/wj})</code></pre>
+<p>Plotting effect size estimates and true parameter values vs. cutpoint:</p>
+<pre class="r"><code>stats_long &lt;- gather(stats[, c(&quot;cutpoint&quot;, &quot;beta&quot;, &quot;truth&quot;)], &quot;type&quot;, &quot;value&quot;, -cutpoint)
+ggplot(stats_long) + geom_point(aes(x=cutpoint, y=value, group=type, color=type)) + 
+  scale_color_discrete(labels=c(&quot;Estimate&quot;, &quot;Truth&quot;)) + ggtitle(&quot;Effect Size Estimates&quot;) + 
+  theme_bw() + theme(panel.grid=element_blank(), axis.title.y=element_blank(), legend.title = element_blank())</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-2-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Because we use the same individuals to estimate each parameter, the estimates are highly correlated.</p>
+</div>
+<div id="confidence-intervals" class="section level2">
+<h2>Confidence Intervals</h2>
+<div id="non-parametric-bootstrap" class="section level3">
+<h3>Non-Parametric Bootstrap</h3>
+<p>The non-parametric bootstrap is the most appropriate choice for these data since the estimates are correlated. Only the non-parametric bootstrap can model this correlation. To use the <code>nonpar_bs_ci</code> function in the <code>rcc</code> package to compute the nonparametric boostrap confidence intervals, we must supply an analysis function. We will use a data object that has <span class="math inline">\(trt\)</span>, <span class="math inline">\(w\)</span>, <span class="math inline">\(E[Y]\)</span>, and <span class="math inline">\(Y\)</span> as the first four columns and the indicator variables <span class="math inline">\(1_{W &gt; w_j}\)</span> as the next 100 columns as input.</p>
+<pre class="r"><code>mydata &lt;- cbind(dat, ix)
+analysis.func &lt;- function(data){
+  y &lt;- data[,4]
+  trt &lt;- data[,1]
+  stats &lt;- apply(data[, 5:(n.cutpoints + 4)], MARGIN=2, FUN=function(ii){
+      f &lt;- lm(y~trt*ii)
+      if(nrow(summary(f)$coefficients) &lt; 4) return(rep(0, 3))
+      summary(f)$coefficients[4, 1:3]
+    })
+  stats &lt;- data.frame(matrix(unlist(stats), byrow=TRUE, ncol=3))
+  names(stats) &lt;- c(&quot;estimate&quot;, &quot;se&quot;, &quot;statistic&quot;)
+  return(stats)
+}</code></pre>
+<p>In the next chunk, we calculate the non-parametrci bootstrap confidence intervals (Algorithm 3 in the paper):</p>
+<pre class="r"><code>ci.nonpar &lt;- nonpar_bs_ci(data=mydata, analysis.func=analysis.func, n.rep=500, parallel=TRUE)
+head(ci.nonpar)</code></pre>
+<pre><code>        est statistic rank  ci.lower  ci.upper debiased.est
+1 0.3857081  2.275907   58 0.1880470 0.5438207    0.3650118
+2 0.4327279  2.639225   50 0.2334653 0.5915110    0.4065245
+3 0.4194834  2.670354   47 0.2073203 0.5666934    0.3875687
+4 0.3477664  2.273104   60 0.1572344 0.5024437    0.3268636
+5 0.3417814  2.276786   57 0.1349982 0.4934780    0.3168783
+6 0.3852470  2.586582   52 0.1730282 0.5410340    0.3570882</code></pre>
+<pre class="r"><code>ci.nonpar &lt;- ci.nonpar[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
+sum(ci.nonpar[,1] &lt;= stats$truth &amp; stats$truth &lt;= ci.nonpar[,2])/n.cutpoints</code></pre>
+<pre><code>[1] 0.96</code></pre>
+<p>Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.</p>
+<pre class="r"><code>plot_cis(stats$rank, ci.nonpar, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Non-Parametric Bootstrap Confidence Intervals&quot;)</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-3-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> Here they are plotted versus cutpoint:</p>
+<pre class="r"><code>plot_cis(cutpoints, ci.nonpar, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Non-Parametric Bootstrap Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-4-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="parametric-bootstrap" class="section level3">
+<h3>Parametric Bootstrap</h3>
+<p>We could instead use the parametric bootstrap (Algorithm 2 and Supplemental Algorithm 2):</p>
+<pre class="r"><code>ci.par &lt;- rcc::par_bs_ci(beta=stats$beta, se=stats$se, n=500, use.abs=TRUE)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]</code></pre>
+<p>Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.</p>
+<pre class="r"><code>plot_cis(stats$rank, ci.par, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Parametric Bootstrap Confidence Intervals&quot;)</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-5-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> Here they are plotted versus cut-point:</p>
+<pre class="r"><code>plot_cis(cutpoints, ci.par, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Parametric Bootstrap Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-6-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>The parametric bootstrap confidence intervals perform more poorly than the non-parametric confidence intervals because estimates are highly correlated but this isn’t modeled in the basic parametric bootstrapping algorithm. These intervals tend to undercover parameters associated with the most and least significant estimates.</p>
+</div>
+<div id="marginal-confidence-intervals" class="section level3">
+<h3>Marginal Confidence Intervals</h3>
+<p>For comparison, let’s look at the naive confidence intervals:</p>
+<pre class="r"><code> ci.naive &lt;- cbind(stats$beta-stats$se*qnorm(0.95), stats$beta + stats$se*qnorm(0.95))
+mean(ci.naive[,1] &lt;= stats$truth &amp; stats$truth &lt;= ci.naive[,2])</code></pre>
+<pre><code>[1] 0.93</code></pre>
+<pre class="r"><code>plot_cis(stats$rank, ci.naive, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Standard Marginal Confidence Intervals&quot;)
+plot_cis(cutpoints, ci.naive, stats$truth, plot.truth=TRUE) + 
+  ggtitle(&quot;Standard Marginal Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-8-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/unnamed-chunk-8-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /> These do pretty well since the estimates are so correlated.</p>
+</div>
+<div id="selection-adjusted-confidence-intervals" class="section level3">
+<h3>Selection Adjusted Confidence Intervals</h3>
+<p>Here are the selection adjusted intervals of the intervals of <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> after selecting the top 10 (10%) parameters. To make running simulations easier, we have included the code distributed by <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> in the <code>rccSims</code> package. The <code>Shortest.CI</code> function used below is part of this code.</p>
+<pre class="r"><code>#We need to give this method the &quot;cutpoint&quot; or minimum value of the test statistic
+ct &lt;- abs(stats$tstat[stats$rank==11])
+wfb &lt;- lapply(stats$tstat, FUN=function(x){
+              if(abs(x) &lt; ct) return(c(NA, NA))
+              ci &lt;- try(rccSims:::Shortest.CI(x, ct=ct, alpha=0.1), silent=TRUE)
+              if(class(ci) == &quot;try-error&quot;) return(c(NA, NA)) #Sometimes WFB code produces errors
+              return(ci)
+             })
+ci.wfb &lt;- matrix(unlist(wfb), byrow=TRUE, nrow=n.cutpoints)
+ci.wfb[,1]&lt;- ci.wfb[,1]*stats$se
+ci.wfb[,2]&lt;- ci.wfb[,2]*stats$se
+mean(ci.wfb[,1] &lt;= stats$truth &amp; ci.wfb[,2]&gt;= stats$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 1</code></pre>
+<p>Here are the 10 WFB intervals which all cover their respective parameters</p>
+<pre><code>Warning: Removed 90 rows containing missing values (geom_linerange).</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-10-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Here are the selection adjusted confidence intervals of <span class="citation">Reid, Taylor, and Tibshirani (2014)</span>. These are implemented in the <code>selectiveInference</code> R package.</p>
+<pre class="r"><code>M &lt;- manyMeans(y=stats$tstat, k=0.1*n.cutpoints, alpha=0.1, sigma=1)
+ci.rtt &lt;- matrix(nrow=n.cutpoints, ncol=2)
+ci.rtt[M$selected.set, ] &lt;- M$ci
+mean(ci.rtt[,1] &lt;= stats$truth &amp; ci.rtt[,2]&gt;= stats$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 0.9</code></pre>
+<pre><code>Warning: Removed 10 rows containing missing values (geom_linerange).</code></pre>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-12-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>This method gives the 10th ranked parameter a very short confidence interval!</p>
+</div>
+<div id="empirical-bayes-confidence-intervals" class="section level3">
+<h3>Empirical Bayes Confidence Intervals</h3>
+<p>Here are the credible intervals we get out of ashr (<span class="citation">Stephens (2016)</span>)</p>
+<pre class="r"><code>ash.res &lt;- ash(betahat = stats$beta, sebetahat = stats$se, mixcompdist = &quot;normal&quot;)
+ci.ash &lt;- ashci(ash.res, level=0.9, betaindex = 1:n.cutpoints, trace=FALSE)
+mean(ci.ash[,1]&lt;= stats$truth &amp; ci.ash[,2] &gt;= stats$truth)</code></pre>
+<pre><code>[1] 0.85</code></pre>
+<p>Here are the ashr intervals at all ranks <img src="figure/biomarker_sims.rmd/unnamed-chunk-14-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="replicate-the-results-in-the-paper" class="section level2">
+<h2>Replicate the results in the paper</h2>
+<p>The steps above are all implemented by the <code>biomarker_sim</code> function in the <code>rccSims</code> package. This code will generate the results in package:</p>
+<pre class="r"><code>biomarker_results &lt;- biomarker_sim(n=400, n.rep = 400, n.cutpoints = 100, seed =1e7)</code></pre>
+<p>These results are also included as a built-in data set in the <code>rccSims</code> package.</p>
+<p>To generate the plots shown in the paper:</p>
+<pre class="r"><code>data(&quot;biomarker_results&quot;, package=&quot;rccSims&quot;)
+coverageplot &lt;- rccSims::plot_coverage(biomarker_results, proportion=1,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+      simnames=c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;, &quot;wfb&quot;, &quot;selInf1&quot;), 
+      ltys= c(2, 1, 3, 6, 4, 2), 
+      span=0.5, main=&quot;Rank Conditional Coverage&quot;, y.range=c(-0.02, 1.02),
+      legend.position = &quot;none&quot;) + theme(plot.title=element_text(hjust=0.5))
+widthplot &lt;- rccSims::plot_width(biomarker_results, proportion=1,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+      simnames=c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;, &quot;wfb&quot;, &quot;selInf1&quot;), 
+      ltys= c(2, 1, 3, 6, 4, 2), span=0.5, main=&quot;Interval Width&quot;,
+      legend.position = &quot;none&quot;) + theme(plot.title=element_text(hjust=0.5))</code></pre>
+<pre><code>Warning in sqrt(sum.squares/one.delta): NaNs produced</code></pre>
+<pre class="r"><code>legend &lt;- rccSims::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &quot;Parametric\nBootstrap&quot;, 
+                                                 &quot;Non-Parametric\nBootstrap&quot;, &quot;ash&quot;, &quot;WFB&quot;, &quot;RTT&quot;), 
+            cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+            ltys= c(2, 1, 3, 6, 4, 2))
+coverageplot</code></pre>
+<pre><code>Warning: Removed 181 rows containing non-finite values (stat_smooth).
+
+Warning: NaNs produced</code></pre>
+<pre><code>Warning in stats::qt(level/2 + 0.5, pred$df): NaNs produced
+
+Warning in stats::qt(level/2 + 0.5, pred$df): NaNs produced</code></pre>
+<pre class="r"><code>widthplot</code></pre>
+<pre><code>Warning: Removed 182 rows containing missing values (geom_path).</code></pre>
+<pre class="r"><code>legend$plot</code></pre>
+<p><img src="figure/biomarker_sims.rmd/plotresults-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/plotresults-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/plotresults-3.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.2 (2017-09-28)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 17.10
+
+Matrix products: default
+BLAS: /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] gridExtra_2.3            selectiveInference_1.2.4
+ [3] survival_2.41-3          intervals_0.15.1        
+ [5] glmnet_2.0-16            foreach_1.4.4           
+ [7] Matrix_1.2-11            ashr_2.2-7              
+ [9] tidyr_0.8.0              rccSims_0.1.0           
+[11] rcc_1.0.0                ggplot2_2.2.1           
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.16      compiler_3.4.2    pillar_1.2.1     
+ [4] git2r_0.21.0      plyr_1.8.4        workflowr_1.0.1  
+ [7] R.methodsS3_1.7.1 R.utils_2.6.0     iterators_1.0.9  
+[10] tools_3.4.2       digest_0.6.15     evaluate_0.10.1  
+[13] tibble_1.4.2      gtable_0.2.0      lattice_0.20-35  
+[16] rlang_0.2.0       yaml_2.1.18       stringr_1.3.0    
+[19] knitr_1.20        tidyselect_0.2.4  rprojroot_1.3-2  
+[22] grid_3.4.2        glue_1.2.0        rmarkdown_1.9    
+[25] purrr_0.2.4       magrittr_1.5      whisker_0.3-2    
+[28] splines_3.4.2     backports_1.1.2   scales_0.5.0     
+[31] codetools_0.2-15  htmltools_0.3.6   MASS_7.3-47      
+[34] assertthat_0.2.0  colorspace_1.3-2  labeling_0.3     
+[37] stringi_1.1.7     pscl_1.5.2        lazyeval_0.2.1   
+[40] munsell_0.4.3     doParallel_1.0.11 truncnorm_1.0-8  
+[43] SQUAREM_2017.10-1 R.oo_1.21.0      </code></pre>
+<div id="refs" class="references">
+<div id="ref-Reid2014">
+<p>Reid, Stephen, Jonathon Taylor, and Robert Tibshirani. 2014. “Post selection point and interval estimation of signal sizes in Gaussian samples.” <em>arXiv Preprint arXiv:1405.3340</em>, May. <a href="http://arxiv.org/abs/1405.3340" class="uri">http://arxiv.org/abs/1405.3340</a>.</p>
+</div>
+<div id="ref-Stephens2016">
+<p>Stephens, Matthew. 2016. “False discovery rates: a new deal.” <em>Biostatistics</em>, October. doi:<a href="https://doi.org/kxw041. doi: 10.1093/biostatistics/kxw041">kxw041. doi: 10.1093/biostatistics/kxw041</a>.</p>
+</div>
+<div id="ref-Weinstein2013">
+<p>Weinstein, Asaf, William Fithian, and Yoav Benjamini. 2013. “Selection Adjusted Confidence Intervals With More Power to Determine the Sign.” <em>Journal of the American Statistical Association</em> 108 (501). Taylor &amp; Francis Group: 165–76. doi:<a href="https://doi.org/10.1080/01621459.2012.737740">10.1080/01621459.2012.737740</a>.</p>
+</div>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
