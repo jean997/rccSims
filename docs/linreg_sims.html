@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Jean Morrison" />
+
+
+<title>Linear Regression with Correlated Predictors (Section 3.1)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">rccSims</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Linear Regression with Correlated Predictors (Section 3.1)</h1>
+<h4 class="author"><em>Jean Morrison</em></h4>
+<h4 class="date"><em>January 3, 2017</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-04-25</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180425)</code> </summary></p>
+<p>The command <code>set.seed(20180425)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/cb9059b1d4d4039c92e45b025bcb700930996486" target="_blank">cb9059b</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  R/get_fcr.R
+    Untracked:  analysis/biomarker_sims_cache/
+    Untracked:  analysis/ci_bib.bib
+    Untracked:  analysis/compare_cis_cache/
+    Untracked:  analysis/compare_cis_temp.Rmd
+    Untracked:  analysis/compare_cis_temp_cache/
+    Untracked:  analysis/linreg_sims_cache/
+    Untracked:  data/sim.list.new.rda
+    Untracked:  temp.RData
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/cb9059b1d4d4039c92e45b025bcb700930996486/analysis/linreg_sims.rmd" target="_blank">cb9059b</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/linreg_sims.rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="problem-set-up" class="section level2">
+<h2>Problem Set-up</h2>
+<p>We imagine a case similar to a genome-wide association or an expression study. For each of 100 individuals, we have measured 1000 features. In a GWAS these would be genetic variants, while in an expression study these would be the abundances of different gene transcripts. In this simulation, the 1000 features are grouped into 100 blocks, each containing 10 features. Features within a block have a pairwise correlation of <span class="math inline">\(\rho\)</span>. For this walk-through we use <span class="math inline">\(\rho=0.3\)</span> but results are presented in the paper for <span class="math inline">\(\rho = -0.1, 0, 0.3\)</span> and 0.8. Code for generating the full set of results can be found at the end. In each block of features, there is one feature that directly influences the outcome, <span class="math inline">\(y\)</span>. The effect sizes for these features are drawn from a normal distribution.</p>
+<p>To illustrate the simulations, we will first generate one data set and calculate several different sets of confidence intervals for the prameters.</p>
+<pre class="r"><code>library(MASS)
+library(ggplot2)
+library(rcc)
+library(rccSims)
+library(gridExtra)
+library(parallel)
+library(ashr)
+set.seed(1e7)
+n.samp &lt;- 100
+n.block &lt;- 100
+
+#Covariance matrix for each block of features
+s &lt;- matrix(0.3, nrow=10, ncol=10)
+diag(s) &lt;- 1
+#Effect sizes for each feature
+beta &lt;- list()
+
+for(i in seq(n.block)){
+  beta[[i]] &lt;- rep(0, 10)
+  beta[[i]][5] &lt;- rnorm(n=1)
+}
+
+#Generate correlated features
+xs &lt;- lapply(1:n.block, FUN=function(k){
+      nk &lt;- length(beta[[k]])
+      mvrnorm(n=n.samp, mu = rep(0, nk), Sigma = s)
+})
+X &lt;- do.call(cbind, xs)
+#Generate outcome
+y &lt;- X%*% unlist(beta) + rnorm(n=n.samp, sd=1)</code></pre>
+</div>
+<div id="parameter-estimation" class="section level2">
+<h2>Parameter estimation</h2>
+<p>For each feature, we estimate the marginal association between the feature and the outcome using linear regression. For convenience (and improved efficiency) we use the <code>many_lr</code> function in the <code>rccSims</code> package which is a convenience utility for running many single variable linear regressions.</p>
+<pre class="r"><code>f_marg &lt;- rccSims:::many_lr(y,X)
+head(f_marg)</code></pre>
+<pre><code>    beta_hat    se_hat
+1  0.8969749 0.9775843
+2 -0.2651403 0.9404450
+3  0.4854244 0.9898717
+4  0.3684987 1.0274091
+5  0.6158628 0.9571941
+6  0.8207306 0.9952321</code></pre>
+<p>We can also calculate the true marginal association for each feature:</p>
+<pre class="r"><code>truth &lt;-  c()
+for(k in 1:n.block){
+    truth &lt;- c(truth, s%*%beta[[k]])
+}
+f_marg$truth &lt;- truth
+plot(f_marg$beta, f_marg$truth, xlab=&quot;Estimate&quot;, ylab=&quot;Truth&quot;, col=rep(rep(c(1, 2, 1), c(4, 1, 5)), 10))
+abline(0, 1)</code></pre>
+<p><img src="figure/linreg_sims.rmd/truth-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="block-based-ranking-scheme" class="section level2">
+<h2>Block-Based Ranking Scheme</h2>
+<p>We will use two different ranking schemes. In Section 3.1 we present results for a scheme where parameters are ranked simply on the absolute value of the test statistic. In Appendix Section 3 we discuss a ranking scheme where we first choose the most significant parameter in each block and then rank only these selected parameters.</p>
+<p>To genmerate bootstrap confidence intervals, we will need a function that implements this block based ranking scheme:</p>
+<pre class="r"><code>rank_block &lt;- function(stats, use.abs, blocks){
+  p &lt;- length(stats)
+  b &lt;- unique(blocks)
+  N &lt;- length(b)
+  if(use.abs) stats &lt;- abs(stats)
+  rank &lt;- rep(NA, p)
+  top_ix_block &lt;- t(sapply(b, FUN=function(blk){
+    ix &lt;- which(blocks==blk)
+    ixmax &lt;- which.max(stats[ix])
+    return(c(ix[ixmax], max(stats[ix])))
+  }))
+  o &lt;- order(top_ix_block[,2], decreasing=TRUE)
+  j &lt;- top_ix_block[order(top_ix_block[,2], decreasing=TRUE),1]
+  rank &lt;- match(1:p, j)
+  return(list(&quot;order&quot;=j, &quot;rank&quot;=rank))
+}</code></pre>
+<p>In general, <code>par_bs_ci</code> and <code>nonpar_bs_ci</code> in the <code>rcc</code> package can accept any ranking function that takes test statistics as the first arguement and <code>use.abs</code> as the second argument — <code>use.abs</code> indicates that ranking should be bsaed on the absolute value of the test statistic. The defualt ranking used by these functions is just the size of the (absolute) statistics. Ranking functions may accept additional arguments as well.</p>
+<p>Here we get both the usual ranking and the block-based ranking for our parameter estimates:</p>
+<pre class="r"><code>blocks &lt;- rep(1:n.block, each=10)
+rnk_usual &lt;- rcc:::basic_rank(f_marg$beta_hat/f_marg$se_hat, use.abs=TRUE)
+rnk_block &lt;- rank_block(f_marg$beta_hat/f_marg$se_hat, use.abs=TRUE, blocks=blocks)
+f_marg$rank_block &lt;- rnk_block$rank
+block_ix &lt;- which(!is.na(f_marg$rank_block))
+f_marg$rank_usual &lt;- rnk_usual$rank</code></pre>
+</div>
+<div id="naive-confidince-intervals" class="section level2">
+<h2>Naive confidince intervals</h2>
+<p>First we calculate the naive confidence intervals which don’t depend on the ranking:</p>
+<pre class="r"><code>ci.naive &lt;- cbind(f_marg$beta_hat - f_marg$se_hat*qnorm(0.95), f_marg$beta_hat + f_marg$se_hat*qnorm(0.95))
+sum(ci.naive[,1] &lt;= f_marg$truth &amp; ci.naive[,2] &gt;= f_marg$truth, na.rm=TRUE)/1000</code></pre>
+<pre><code>[1] 0.876</code></pre>
+<p>Here we plot the naive intervals vs. both ranks</p>
+<pre class="r"><code>plot_cis(f_marg$rank_usual, ci.naive, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Naive intervals: Usual ranking&quot;)
+plot_cis(f_marg$rank_block[block_ix], ci.naive[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Naive intervals: Block-based ranking&quot;)</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-2-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-2-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="parametric-bootstrap" class="section level2">
+<h2>Parametric bootstrap</h2>
+<p>Next we calculate parametric bootstrap confidence intervals using the usual and block-based ranking schemes. For details on how the <code>par_bs_ci</code> function works, see Algorithm 2 and Appendix Algorithm 2 in the paper. You can also refer to the walk-through for section 1.5, <a href="compare_cis.html">here</a>.</p>
+<pre class="r"><code>#Block-based
+ci.par.block &lt;- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat, 
+                          rank.func = rank_block, blocks=blocks)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
+mean(ci.par.block[,1] &lt;= f_marg$truth &amp; ci.par.block[,2] &gt;= f_marg$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 0.95</code></pre>
+<pre class="r"><code>#Usual
+ci.par.usual &lt;- par_bs_ci(beta=f_marg$beta_hat, se=f_marg$se_hat)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
+mean(ci.par.usual[,1] &lt;= f_marg$truth &amp; ci.par.usual[,2] &gt;= f_marg$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 0.99</code></pre>
+<pre class="r"><code>plot_cis(f_marg$rank_usual, ci.par.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Parametric bootstrap intervals: Usual ranking&quot;)
+plot_cis(f_marg$rank_block[block_ix], ci.par.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Parametric bootstrap intervals: Block-based ranking&quot;)</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-3-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-3-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="non-parametric-bootstrap" class="section level2">
+<h2>Non-parametric bootstrap</h2>
+<p>The non-parametric boostrap is described in Algorithm 3 of the paper and implemented in the <code>nonpar_bs_ci</code> function of the <code>rcc</code> package. To compute the non-parametric bootstrap confidence intervals, we must supply a function that calculates parameter estimates from data. In <code>nonpar_bs_ci</code>, this is the <code>analysis.func</code> argument.</p>
+<p>Here is the analysis function for our problem:</p>
+<pre class="r"><code>lr_func &lt;- function(data){
+    y &lt;- data[,1]
+    X &lt;- data[, -1]
+    ests &lt;- rccSims:::many_lr(y, X, parallel=FALSE)
+    df &lt;- data.frame(&quot;estimate&quot;=ests$beta_hat, &quot;se&quot;=ests$se_hat, &quot;statistic&quot;=ests$beta_hat/ests$se_hat)
+    return(df)
+}</code></pre>
+<p>For <code>nonpar_bs_ci</code> the analysis funciton may take only one argument so we supply a data frame or matrix that has <span class="math inline">\(y\)</span> as the first column and the features as the subsequent columns.</p>
+<p>Here we calculate the nonparametric boostrap confidence intervals using the usual and block-based ranking schemes. The <code>parallel</code> argument uses the <code>parallel</code> package to make use of multiple cores if available.</p>
+<pre class="r"><code>data &lt;- cbind(y, X)
+#Usual
+ci.nonpar.usual &lt;- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, 
+                              level = 0.9, parallel=TRUE)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
+mean(ci.nonpar.usual[,1] &lt;= f_marg$truth &amp; ci.nonpar.usual[,2] &gt;= f_marg$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 0.988</code></pre>
+<pre class="r"><code>#Block-based
+ci.nonpar.block &lt;- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, rank.func = rank_block,
+                              level = 0.9, parallel=TRUE, blocks=blocks)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
+mean(ci.nonpar.block[,1] &lt;= f_marg$truth &amp; ci.nonpar.block[,2] &gt;= f_marg$truth, na.rm=TRUE)</code></pre>
+<pre><code>[1] 0.96</code></pre>
+<pre class="r"><code>plot_cis(f_marg$rank_usual, ci.nonpar.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Non-parametric bootstrap intervals: Usual ranking&quot;)
+plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Non-parametric bootstrap intervals: Block-based ranking&quot;)</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-4-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-4-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Selection adjusted intervals of <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> and <span class="citation">Reid, Taylor, and Tibshirani (2014)</span> are discussed in the walk-through for Section 1.5 and they look quite similar in this case so we will skip them here. They are included in the full simulation results below. We will show <code>ashr</code> credible intervals for this problem since, in this case the true parameter values are non-sparse (we are measuring the marginal effects) which leads to worse performance for <code>ashr</code>.</p>
+</div>
+<div id="empirical-bayes-credible-intervals-ashr-stephens-201" class="section level2">
+<h2>Empirical Bayes credible intervals (ashr; Stephens, 201)</h2>
+<p>Next we generate the <code>ashr</code> credible intervals of <span class="citation">Stephens (2016)</span>:</p>
+<pre class="r"><code>ash.res &lt;- ash(betahat = f_marg$beta_hat, sebetahat = f_marg$se_hat, mixcompdist = &quot;normal&quot;)
+ci.ash &lt;- ashci(ash.res, level=0.9, betaindex = 1:1000, trace=FALSE)
+mean(ci.ash[,1]&lt;= f_marg$truth &amp; ci.ash[,2] &gt;= f_marg$truth)</code></pre>
+<pre><code>[1] 0.803</code></pre>
+<pre class="r"><code>plot_cis(f_marg$rank_usual, ci.ash, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;ashr credible intervals: Usual ranking&quot;)
+plot_cis(f_marg$rank_block[block_ix], ci.ash[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;ashr credible intervals: Block-based ranking&quot;)</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-6-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-6-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="simulations-in-section-3.1-and-appendix-section-3" class="section level2">
+<h2>Simulations in Section 3.1 and Appendix section 3</h2>
+<p>Simulation results for usual ranking are shown in Section 3.1 and for block based ranking in Appendix Section 3. All of the steps in the previous section plus the intervals of <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> and <span class="citation">Reid, Taylor, and Tibshirani (2014)</span> are implemented executed by the <code>cluster_sim</code> function in the <code>rccSims</code> package. We ran 400 simulations for each of four values of <span class="math inline">\(\rho\)</span>. Since these take a little bit longer to run than the example in Section 1.5 (since we include the non-parametric bootstrap), we ran the simulations simulataneously as individual jobs submitted to a large cluster and each job had it’s own seed. If you didn’t have access to a cluster, the following loop would generate the same results (and uses the same seeds), but we recomend running these in parallel rather than in a loop.</p>
+<pre class="r"><code>set.seed(5989615)
+all.seeds &lt;- floor(runif(n=400, min=1000, max=1e7))
+
+nblock &lt;- 100
+beta &lt;- list()
+for(i in 1:nblock) beta[[i]] &lt;- rep(c(0, rnorm(n=1), 0), c(4, 1, 5))
+
+for(rho in c(-0.1, 0, 0.3, 0.8)){
+  s &lt;- matrix(rho, nrow=10, ncol=10)
+  diag(s) &lt;- 1
+  Sigma &lt;- list()
+  for(i in 1:nblock) Sigma[[i]] &lt;- s
+  for(j in 1:400){
+    results &lt;- rccSims::cluster_sim(beta, Sigma, err.sd=1, n.samp=100, 
+                                    n.rep=1, seed=all.seeds[j], parallel=FALSE)
+    save(results, file=paste0(&quot;cw_ranking&quot;, rho, &quot;_n&quot;, j, &quot;.RData&quot;))
+  }
+}</code></pre>
+<p>All of these results are included as built-in data sets to the <code>rccSims</code> package in the <code>lr_res</code> object, so you don’t have to run them! <code>lr_res</code> is a list of length 4 with items corresponding to <span class="math inline">\(rho=-0.1, 0, 0.3\)</span> and <span class="math inline">\(0.8\)</span> respectively.</p>
+<p>Here we plot the results for the usual ranking scheme (Section 3.1):</p>
+<pre class="r"><code>data(&quot;lr_res&quot;, package=&quot;rccSims&quot;)
+covplots &lt;- list()
+widthplots &lt;- list()
+tpart &lt;- paste0(&quot;=&quot;, c(-0.1, 0, 0.3, 0.8)) #For titles
+for(i in 1:4){
+  lp &lt;- &quot;none&quot;
+  covplots[[i]] &lt;- plot_coverage(lr_res[[i]], proportion=0.2,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+      simnames=paste0(c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;, &quot;wfb&quot;, &quot;selInf1&quot;), &quot;_basic&quot;),
+      ltys= c(2, 1, 3, 6, 4, 2), span=0.5, y.range=c(-0.02, 1.02),
+      legend.position = lp) + theme(plot.title=element_text(hjust=0.5)) + ggtitle(bquote(rho~.(tpart[i])))
+  widthplots[[i]] &lt;- plot_width(lr_res[[i]], proportion=0.2,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+      simnames=paste0(c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;, &quot;wfb&quot;, &quot;selInf1&quot;), &quot;_basic&quot;),
+      ltys= c(2, 1, 3, 6, 4, 2), span=0.5,
+      legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))+ ggtitle(bquote(rho~.(tpart[i])))
+
+}
+legend &lt;- rccSims::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &quot;Parametric\nBootstrap&quot;, 
+                                                 &quot;Non-Parametric\nBootstrap&quot;, &quot;ash&quot;, &quot;WFB&quot;, &quot;RTT&quot;), 
+            cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
+            ltys= c(2, 1, 3, 6, 4, 2))</code></pre>
+<pre class="r"><code>covplots[[1]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
+<pre class="r"><code>widthplots[[1]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-9-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-9-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[2]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
+<pre class="r"><code>widthplots[[2]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-10-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-10-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[3]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
+<pre class="r"><code>widthplots[[3]]</code></pre>
+<pre><code>Warning: Removed 201 rows containing missing values (geom_path).</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-11-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-11-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[4]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
+<pre class="r"><code>widthplots[[4]]</code></pre>
+<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-12-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-12-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Here are plots using the block-based ranking scheme (Appendix Section 3). We don’t include the selection adjusted intervals in these plots because they only consider selection schemes based on absolute value.</p>
+<pre class="r"><code>covplots &lt;- list()
+widthplots &lt;- list()
+for(i in 1:4){
+  lp &lt;- &quot;none&quot;
+  covplots[[i]] &lt;- plot_coverage(lr_res[[i]], proportion=0.1,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;),
+      simnames=paste0(c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;), &quot;_cw&quot;),
+      ltys= c(2, 1, 3, 6), span=0.5, y.range=c(-0.02, 1.02),
+      legend.position = lp) + theme(plot.title=element_text(hjust=0.5)) + ggtitle(bquote(rho~.(tpart[i])))
+  widthplots[[i]] &lt;- plot_width(lr_res[[i]], proportion=0.1,
+      cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;),
+      simnames=paste0(c(&quot;naive&quot;,  &quot;par&quot;,    &quot;nonpar&quot;, &quot;ash&quot;), &quot;_cw&quot;),
+      ltys= c(2, 1, 3, 6), span=0.5,
+      legend.position = lp)+ theme(plot.title=element_text(hjust=0.5))+ ggtitle(bquote(rho~.(tpart[i])))
+
+}
+legend &lt;- rccSims:::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &quot;Parametric\nBootstrap&quot;, 
+                                                 &quot;Non-Parametric\nBootstrap&quot;, &quot;ashr&quot;), 
+            cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;),
+            ltys= c(2, 1, 3, 6))</code></pre>
+<pre class="r"><code>covplots[[1]]
+widthplots[[1]]</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-15-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-15-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[2]]
+widthplots[[2]]</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-16-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-16-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[3]]
+widthplots[[3]]</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-17-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-17-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covplots[[4]]
+widthplots[[4]]</code></pre>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-18-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-18-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.2 (2017-09-28)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 17.10
+
+Matrix products: default
+BLAS: /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] ashr_2.2-7    gridExtra_2.3 rccSims_0.1.0 rcc_1.0.0     ggplot2_2.2.1
+[6] MASS_7.3-47  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.16             compiler_3.4.2          
+ [3] pillar_1.2.1             git2r_0.21.0            
+ [5] plyr_1.8.4               workflowr_1.0.1         
+ [7] R.methodsS3_1.7.1        R.utils_2.6.0           
+ [9] iterators_1.0.9          tools_3.4.2             
+[11] digest_0.6.15            selectiveInference_1.2.4
+[13] evaluate_0.10.1          tibble_1.4.2            
+[15] gtable_0.2.0             lattice_0.20-35         
+[17] rlang_0.2.0              Matrix_1.2-11           
+[19] foreach_1.4.4            yaml_2.1.18             
+[21] stringr_1.3.0            knitr_1.20              
+[23] tidyselect_0.2.4         glmnet_2.0-16           
+[25] rprojroot_1.3-2          grid_3.4.2              
+[27] glue_1.2.0               survival_2.41-3         
+[29] rmarkdown_1.9            purrr_0.2.4             
+[31] tidyr_0.8.0              magrittr_1.5            
+[33] whisker_0.3-2            splines_3.4.2           
+[35] intervals_0.15.1         backports_1.1.2         
+[37] scales_0.5.0             codetools_0.2-15        
+[39] htmltools_0.3.6          assertthat_0.2.0        
+[41] colorspace_1.3-2         labeling_0.3            
+[43] stringi_1.1.7            pscl_1.5.2              
+[45] lazyeval_0.2.1           munsell_0.4.3           
+[47] doParallel_1.0.11        truncnorm_1.0-8         
+[49] SQUAREM_2017.10-1        R.oo_1.21.0             </code></pre>
+<div id="refs" class="references">
+<div id="ref-Reid2014">
+<p>Reid, Stephen, Jonathon Taylor, and Robert Tibshirani. 2014. “Post selection point and interval estimation of signal sizes in Gaussian samples.” <em>arXiv Preprint arXiv:1405.3340</em>, May. <a href="http://arxiv.org/abs/1405.3340" class="uri">http://arxiv.org/abs/1405.3340</a>.</p>
+</div>
+<div id="ref-Stephens2016">
+<p>Stephens, Matthew. 2016. “False discovery rates: a new deal.” <em>Biostatistics</em>, October. doi:<a href="https://doi.org/kxw041. doi: 10.1093/biostatistics/kxw041">kxw041. doi: 10.1093/biostatistics/kxw041</a>.</p>
+</div>
+<div id="ref-Weinstein2013">
+<p>Weinstein, Asaf, William Fithian, and Yoav Benjamini. 2013. “Selection Adjusted Confidence Intervals With More Power to Determine the Sign.” <em>Journal of the American Statistical Association</em> 108 (501). Taylor &amp; Francis Group: 165–76. doi:<a href="https://doi.org/10.1080/01621459.2012.737740">10.1080/01621459.2012.737740</a>.</p>
+</div>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
