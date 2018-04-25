@@ -1,8 +1,8 @@
 # Functions for calculating conditional acceptance regions of level alpha,
-# and (1-alpha)100% conditional confidence intervals, 
+# and (1-alpha)100% conditional confidence intervals,
 # for normally distributed estimator with variance 1
 # conditioned upon exceeding in absolute value a threshold ct.
-# Escorting the paper "Selection Adjusted Confidence Intervals 
+# Escorting the paper "Selection Adjusted Confidence Intervals
 #  with More Power to Determine the Sign"
 # By Asaf Weinstein, William Fithian, and Yoav Benjamini JASA (2012)
 
@@ -10,7 +10,7 @@
 # Conditional Shortest Acceptance Region
 
 Shortest.AR <- function(theta,ct,alpha){
-Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)	
+Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)
 #compute useful quantities
 f <- function(theta) ( pnorm(ct + theta) - pnorm(ct - theta) ) - (1 - alpha) * Q(theta)
 theta1 <- uniroot(f,c(0,ct + qnorm(1 - alpha))) $ root
@@ -65,7 +65,7 @@ return(v)
 # Conditional Shortest Confidence Interval
 
 Shortest.CI <- function(x,ct,alpha) {
-Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)	
+Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)
 #compute useful quantities
 f <- function(theta) ( pnorm(ct + theta) - pnorm(ct - theta) ) - (1 - alpha) * Q(theta)
 theta1 <- uniroot(f,c(0, ct + qnorm(1 - alpha))) $ root
@@ -103,6 +103,13 @@ if (is.neg == 1) CI <- list(lower = -upper, upper = -lower)
 return(CI)
 }
 
+#Jean's function for catching errors
+#'@export
+my_shortest_ci <- function(x, ct, alpha){
+  ci <- try(Shortest.CI(x, ct, alpha), silent=TRUE)
+  if(class(ci)=="try-error") return(c(NA, NA))
+  return(unlist(ci))
+}
 # Conditional Modified Pratt Acceptance Region
 
 # r is the allowed expansion of the length relative the to the conventional CI
@@ -161,11 +168,11 @@ return(A)
 
 # Conditional Modified Pratt Confidence Interval
 
-# r is the allowed expansion of the length of acceptance region 
+# r is the allowed expansion of the length of acceptance region
 # relative the to the conventional CI
 
 MP.CI <- function(x,r=1.2,ct,alpha){
-Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)	
+Q <- function(theta) 1 - pnorm(ct + theta) + 1 - pnorm(ct - theta)
 #compute useful quantities
 f <- function(theta) pnorm( ct + r * Shortest.AR(theta,ct,alpha)$l - theta ) - pnorm( ct - theta ) - (1 - alpha) *  Q(theta)
 thetatilde1 <- uniroot(f,c(0,theta1)) $ root
@@ -214,7 +221,7 @@ return(CI)
 
 # Conditional Quasi-Conventinal Acceptance regions
 
-# lambda governs the ballance between more power to determine the sign (smaller lambda) 
+# lambda governs the ballance between more power to determine the sign (smaller lambda)
 # and shorter length of acceptance region (larger lambda)
 
 QC.AR <- function(theta,lambda=0.4,ct,alpha){
@@ -272,9 +279,9 @@ return(A)
 
 
 
-#Conditional Quasi-Conventinal Confidence Interval 
+#Conditional Quasi-Conventinal Confidence Interval
 
-# lambda governs the ballance between more power to determine the sign (smaller lambda) 
+# lambda governs the ballance between more power to determine the sign (smaller lambda)
 # and shorter length of the confidence interval (larger lambda)
 
 
@@ -305,8 +312,8 @@ is.neg <- 0
 if (x < 0) is.neg <- 1
 x <- abs(x)
 
-#obtain lower end of CI        
-#NOTE: numerical problem may arise in obtaining lower end when |x-ct| extremely small 
+#obtain lower end of CI
+#NOTE: numerical problem may arise in obtaining lower end when |x-ct| extremely small
 # (this problem was not encountered in our use of the fuction)
 if (ct < x && x < xprime1) {
 d <- x - ct
@@ -318,10 +325,10 @@ g <- function(theta) dmin(theta) - (x - ct)
 }
 leftend <- thetamin + 1e-5
 while (is.na(suppressWarnings(f(leftend)))) leftend <- leftend + 1e-5 * 5
-lower <- uniroot(f,c(leftend, thetaprime1 + .1)) $ root       
-#NOTE: for very small x, this numerical computation might find the lower bound 
-# to be bigger than thetaprime1, 
-# even though the true root must be smaller than thetaprime1 for such x; 
+lower <- uniroot(f,c(leftend, thetaprime1 + .1)) $ root
+#NOTE: for very small x, this numerical computation might find the lower bound
+# to be bigger than thetaprime1,
+# even though the true root must be smaller than thetaprime1 for such x;
 # However, the discrepancy is very small and the constrain is applied.
 lower <- - lower
   }
@@ -353,7 +360,7 @@ return(CI)
 
 
 
-# Maximum length increase of the Quasi-Conventional CI 
+# Maximum length increase of the Quasi-Conventional CI
 # as a function of lambda, for a given threshold ct and alpha.
 
 QC.maxlength <- function(lambda,ct,alpha){
