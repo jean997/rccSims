@@ -1,9 +1,26 @@
 ---
-title: "Home"
+title: "Rank Conditional Coverage Simulations"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
     toc: false
 ---
 
-Welcome to my research website.
+Welcome to the rank conditional coverage wimulations and examples website! Here you will find walkthroughs of all the simulations presented in [the paper](https://arxiv.org/abs/1702.06986) and some useful tips for running the package. The R package rcc can be installed from CRAN using 
+
+```{r, eval=FALSE}
+install.packages("rcc")
+```
+
+To run the simuations, we use a package `rccSims` that we wrote especially for this purpose. It can be installed using
+
+```{r, eval=FALSE}
+devtools::install_git("https://github.com/jean997/rccSims.git")
+```
+
+
+### Simulations
+
++ [Example in Section 1.5](compare_cis.html)
++ [Linear Regression with Correlated Predictors (Section 3.1)](linreg_sims.html)
++ [Treatment Effects in Nested Subgroups (Section 3.2)](biomarker_sims.html)
