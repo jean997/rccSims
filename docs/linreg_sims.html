@@ -341,7 +341,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/6ad971fe9fc03f3026319a77f213f9ce051fc0e7" target="_blank">6ad971f</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/0309c1a562faf52b857a8a4c441782222acbf1e2" target="_blank">0309c1a</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -381,6 +381,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/0309c1a562faf52b857a8a4c441782222acbf1e2/analysis/linreg_sims.rmd" target="_blank">0309c1a</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-26
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/biomarker_sims.rmd”, “analysis/compare_cis.rmd”, “analysis/linreg_sims.rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/jean997/rccSims/a458fe50a2eeb5f47ddd5be69f542e03962e48f0/docs/linreg_sims.html" target="_blank">a458fe5</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-26
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 rmd
@@ -795,7 +829,7 @@ Jean Morrison
 <pre class="r"><code>ash.res &lt;- ash(betahat = f_marg$beta_hat, sebetahat = f_marg$se_hat, mixcompdist = &quot;normal&quot;)
 ci.ash &lt;- ashci(ash.res, level=0.9, betaindex = 1:1000, trace=FALSE)
 mean(ci.ash[,1]&lt;= f_marg$truth &amp; ci.ash[,2] &gt;= f_marg$truth)</code></pre>
-<pre><code>[1] 0.803</code></pre>
+<pre><code>[1] 0.804</code></pre>
 <pre class="r"><code>plot_cis(f_marg$rank_usual, ci.ash, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;ashr credible intervals: Usual ranking&quot;)
 plot_cis(f_marg$rank_block[block_ix], ci.ash[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;ashr credible intervals: Block-based ranking&quot;)</code></pre>
 <p><img src="figure/linreg_sims.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -905,10 +939,8 @@ legend &lt;- rccSims::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &qu
                                                  &quot;Non-Parametric\nBootstrap&quot;, &quot;ash&quot;, &quot;WFB&quot;, &quot;RTT&quot;), 
             cols=c(&quot;black&quot;,  &quot;deeppink3&quot;,  &quot;red&quot;, &quot;gold4&quot;, &quot;forestgreen&quot;, &quot;purple&quot;),
             ltys= c(2, 1, 3, 6, 4, 2))</code></pre>
-<pre class="r"><code>covplots[[1]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
-<pre class="r"><code>widthplots[[1]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<pre class="r"><code>covplots[[1]]
+widthplots[[1]]</code></pre>
 <p><img src="figure/linreg_sims.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -970,10 +1002,8 @@ Jean Morrison
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>covplots[[2]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
-<pre class="r"><code>widthplots[[2]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<pre class="r"><code>covplots[[2]]
+widthplots[[2]]</code></pre>
 <p><img src="figure/linreg_sims.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -1035,10 +1065,8 @@ Jean Morrison
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>covplots[[3]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
-<pre class="r"><code>widthplots[[3]]</code></pre>
-<pre><code>Warning: Removed 201 rows containing missing values (geom_path).</code></pre>
+<pre class="r"><code>covplots[[3]]
+widthplots[[3]]</code></pre>
 <p><img src="figure/linreg_sims.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -1100,10 +1128,8 @@ Jean Morrison
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>covplots[[4]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
-<pre class="r"><code>widthplots[[4]]</code></pre>
-<pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
+<pre class="r"><code>covplots[[4]]
+widthplots[[4]]</code></pre>
 <p><img src="figure/linreg_sims.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -1478,20 +1504,21 @@ loaded via a namespace (and not attached):
 [17] rlang_0.2.0              Matrix_1.2-11           
 [19] foreach_1.4.4            yaml_2.1.18             
 [21] stringr_1.3.0            knitr_1.20              
-[23] tidyselect_0.2.4         glmnet_2.0-16           
-[25] rprojroot_1.3-2          grid_3.4.2              
-[27] glue_1.2.0               survival_2.41-3         
-[29] rmarkdown_1.9            purrr_0.2.4             
-[31] tidyr_0.8.0              magrittr_1.5            
-[33] whisker_0.3-2            splines_3.4.2           
-[35] intervals_0.15.1         backports_1.1.2         
-[37] scales_0.5.0             codetools_0.2-15        
-[39] htmltools_0.3.6          assertthat_0.2.0        
-[41] colorspace_1.3-2         labeling_0.3            
-[43] stringi_1.1.7            pscl_1.5.2              
-[45] lazyeval_0.2.1           munsell_0.4.3           
-[47] doParallel_1.0.11        truncnorm_1.0-8         
-[49] SQUAREM_2017.10-1        R.oo_1.21.0             </code></pre>
+[23] REBayes_1.3              tidyselect_0.2.4        
+[25] glmnet_2.0-16            rprojroot_1.3-2         
+[27] grid_3.4.2               glue_1.2.0              
+[29] survival_2.41-3          rmarkdown_1.9           
+[31] purrr_0.2.4              tidyr_0.8.0             
+[33] magrittr_1.5             whisker_0.3-2           
+[35] splines_3.4.2            intervals_0.15.1        
+[37] backports_1.1.2          scales_0.5.0            
+[39] codetools_0.2-15         htmltools_0.3.6         
+[41] assertthat_0.2.0         colorspace_1.3-2        
+[43] labeling_0.3             stringi_1.1.7           
+[45] Rmosek_7.1.3             pscl_1.5.2              
+[47] lazyeval_0.2.1           munsell_0.4.3           
+[49] doParallel_1.0.11        truncnorm_1.0-8         
+[51] SQUAREM_2017.10-1        R.oo_1.21.0             </code></pre>
 <div id="refs" class="references">
 <div id="ref-Reid2014">
 <p>Reid, Stephen, Jonathon Taylor, and Robert Tibshirani. 2014. “Post selection point and interval estimation of signal sizes in Gaussian samples.” <em>arXiv Preprint arXiv:1405.3340</em>, May. <a href="http://arxiv.org/abs/1405.3340" class="uri">http://arxiv.org/abs/1405.3340</a>.</p>
