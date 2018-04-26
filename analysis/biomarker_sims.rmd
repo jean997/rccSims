@@ -7,7 +7,7 @@ bibliography: ci_bib.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.show='hold', out.width="0.5\\textwidth")
+knitr::opts_chunk$set(echo = TRUE, fig.show='hold')
 ```
 
 ## Simulation Set-up
@@ -194,7 +194,7 @@ mean(ci.wfb[,1] <= stats$truth & ci.wfb[,2]>= stats$truth, na.rm=TRUE)
 ```
 
 Here are the 10 WFB intervals which all cover their respective parameters
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(stats$rank, ci.wfb, stats$truth, plot.truth=TRUE) + ggtitle("Weinstein, Fithian, and Benjamini Intervals")
 ```
 
@@ -208,7 +208,7 @@ ci.rtt[M$selected.set, ] <- M$ci
 mean(ci.rtt[,1] <= stats$truth & ci.rtt[,2]>= stats$truth, na.rm=TRUE)
 ```
 
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(stats$rank, ci.rtt, stats$truth, plot.truth=TRUE, prop=0.2) + ggtitle("Reid, Taylor, and Tibshirani Intervals")
 ```
 
@@ -226,7 +226,7 @@ mean(ci.ash[,1]<= stats$truth & ci.ash[,2] >= stats$truth)
 
 
 Here are the ashr intervals at all ranks
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(stats$rank, ci.ash, stats$truth) + ggtitle("ashr Credible Intervals (Stephens 2016)")
 ```
 
@@ -239,7 +239,7 @@ These results are also included as a built-in data set in the `rccSims` package.
 
 To generate the plots shown in the paper:
 
-```{r plotresults, show="hold", out.width="0.5\\textwidth"}
+```{r plotresults, show="hold"}
 data("biomarker_results", package="rccSims")
 coverageplot <- rccSims::plot_coverage(biomarker_results, proportion=1,
       cols=c("black",  "deeppink3",  "red", "gold4", "forestgreen", "purple"),

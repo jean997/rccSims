@@ -22,6 +22,8 @@ We will rank these statistics based on their absolute value.
 library(ggplot2)
 library(rcc)
 library(rccSims)
+library(selectiveInference)
+
 set.seed(1e7)
 theta <- rnorm(1000)
 Z <- rnorm(n=1000, mean=theta)
@@ -38,18 +40,18 @@ ci.naive <- cbind(Z - qnorm(0.95), Z + qnorm(0.95))
 sum(ci.naive[,1] <= theta & ci.naive[,2] >= theta)/1000
 ```
 We can plot these intervals and color them by whether or not they cover their target parameter. Notice that even though the overall coverage rate is close to the nominal level, a lot of the non-covering intervals are constructed for the most extreme statistics.
-```{r, out.width="0.5\\textwidth"}
+```{r}
 rccSims::plot_cis(rank, ci.naive, theta) + ggtitle("Standard Marginal Intervals")
 ```
 
 Here is the same plot for only the top 20\% of statistics. In this plot, points show the value of the true parameter. 
-```{r, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, echo=FALSE}
 rccSims::plot_cis(rank, ci.naive, theta, prop = 0.2, plot.truth=TRUE) + ggtitle("Standard Marginal Intervals")
 ```
 
 This is just one data set. To see what the expected coverage rates at each rank are we'll simulate 100 more data sets:
 
-```{r, cache=TRUE}
+```{r}
 z_many <- replicate(n=100, expr={rnorm(n=1000, mean=theta)})
 naive.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing=TRUE)
@@ -60,7 +62,7 @@ naive.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 ```
 
 Plotting the average coverage at each rank:
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:1000, "Coverage"=rowMeans(naive.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept = 0.9)+
@@ -79,13 +81,13 @@ theta.sel <- theta[rank <= 100]
 ci.by <- cbind(Z.sel - qnorm(0.995) , Z.sel + qnorm(0.995))
 sum(ci.by[,1] <= theta.sel & ci.by[,2] >= theta.sel)/100
 ```
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank[rank <= 100], ci.by, theta.sel, plot.truth=TRUE) + ggtitle("Benjamini and Yukatieli Intervals")
 ```
 
 Now averaging coverage of the BY intervals over 100 data sets:
 
-```{r, cache=TRUE}
+```{r}
 system.time(by.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing=TRUE)
   ci <- cbind(zz[j][1:100] - qnorm(0.995), zz[j][1:100] + qnorm(0.995))
@@ -95,7 +97,7 @@ system.time(by.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 #The average coverage in each simulation is close to the nominal level
 summary(colMeans(by.coverage))
 ```
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:100, "Coverage"=rowMeans(by.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -120,12 +122,12 @@ wfb <- lapply(Z, FUN=function(x){
 ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=1000)[rank <= 100,]
 sum(ci.wfb[,1] <= theta[rank <=100] & ci.wfb[,2]>= theta[rank<=100])/100
 ```
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank[rank <= 100], ci.wfb, theta.sel, plot.truth=TRUE) + ggtitle("Weinstein, Fithian, and Benjamini Intervals")
 ```
 
 Most of the non-covering intervals are still for the parameters with the most significnt estimates. This pattern is clear when we look at the average coverage over 100 data sets:
-```{r, cache=TRUE}
+```{r}
 system.time(wfb.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing=TRUE)
   ct <- abs(zz[j][101])
@@ -142,7 +144,7 @@ system.time(wfb.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 #The average coverage in each simulation is close to the nominal level
 summary(colMeans(wfb.coverage))
 ```
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:100, "Coverage"=rowMeans(wfb.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -155,7 +157,6 @@ ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  +
 Finally, lets look at the intervals of @Reid2014. These are implemented in the `selectiveInference` R package
 
 ```{r, warning=FALSE, message=FALSE}
-library(selectiveInference)
 M <- manyMeans(y=Z, k=100, alpha=0.1, sigma=1)
 ci.rtt <- matrix(nrow=1000, ncol=2)
 ci.rtt[M$selected.set, ] <- M$ci
@@ -163,13 +164,13 @@ ci.rtt <- ci.rtt[rank <= 100,]
 sum(ci.rtt[,1] <= theta[rank <=100] & ci.rtt[,2]>= theta[rank<=100])/100
 ```
 
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank[rank <= 100], ci.rtt, theta.sel, plot.truth=TRUE) + ggtitle("Reid, Taylor, and Tibshirani Intervals")
 ```
 
 For the most part, these intervals are narrower than the @Weinstein2013 intervals. Non-covering intervals tend to be concentrated at the two extremes -- parameters associated with the most and least significant estimates tend to go uncovered. We can see this by looking at the average over 100 simulations:
 
-```{r, cache=TRUE}
+```{r}
 system.time(rtt.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing=TRUE)
   M <- manyMeans(y=zz, k=100, alpha=0.1, sigma=1)
@@ -182,7 +183,7 @@ system.time(rtt.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 #The average coverage in each simulation is close to the nominal level
 summary(colMeans(rtt.coverage))
 ```
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:100, "Coverage"=rowMeans(rtt.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -227,11 +228,11 @@ all.equal(ci.boot2$ci.upper, ci.boot[,2])
 ```
 
 Here are the parametric bootstrap intervals for all ranks:
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank, ci.boot, theta) + ggtitle("Parametric Bootstrap Intervals")
 ```
 and for just the top 20\% of ranks
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank, ci.boot, theta, prop=0.2, plot.truth=TRUE) + ggtitle("Parametric Bootstrap Intervals")
 ```
 
@@ -239,7 +240,7 @@ rccSims::plot_cis(rank, ci.boot, theta, prop=0.2, plot.truth=TRUE) + ggtitle("Pa
 Looking at the average coverage over 100 data sets we see that the parametric bootstrap intervals are slightly conservative but that the average coverage for each rank is close to the nominal level. 
 
 
-```{r, cache=TRUE}
+```{r}
 system.time(boot.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   ci <- rcc::par_bs_ci(beta=zz)[, c("ci.lower", "ci.upper")]
   covered <- (ci[,1] <= theta & ci[,2] >= theta)
@@ -247,7 +248,7 @@ system.time(boot.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 }))
 summary(colMeans(boot.coverage))
 ```
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:1000, "Coverage"=rowMeans(boot.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -257,7 +258,7 @@ ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  +
 
 The difference between the observed average coverage at each rank and the nominal level is a result of using $Z_i$ as an estimate for $\theta_i$ in the bootstrapping step. If we knew $\theta_i$ we could generate the oracle bootstrap intervals which achieve exactly the right coverage at each rank (and are much smaller):
 
-```{r, cache=TRUE}
+```{r}
 oracle.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   ci <- rcc::par_bs_ci(beta=zz, theta=theta)[, c("ci.lower", "ci.upper")]
   covered <- (ci[,1] <= theta & ci[,2] >= theta)
@@ -266,7 +267,7 @@ oracle.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 summary(colMeans(oracle.coverage))
 ```
 
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:1000, "Coverage"=rowMeans(oracle.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -288,18 +289,18 @@ sum(ci.ash[,1]<= theta & ci.ash[,2] >= theta)/1000
 
 
 Here are the ashr intervals at all ranks
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank, ci.ash, theta) + ggtitle("ashr Credible Intervals (Stephens 2016)")
 ```
 and for just the parameters with estimates in the top 20\%
-```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
+```{r, show=FALSE, hold=TRUE, echo=FALSE}
 rccSims::plot_cis(rank, ci.ash, theta, prop=0.2, plot.truth=TRUE) + ggtitle("ashr Credible Intervals (Stephens 2016)")
 ```
 
 
 We can look at the average coverage of the `ashr` credible intervals over 100 simulations. It is worth noting that we have conducted the simulations from more of a frequentist point of view --- the parameters were fixed at the beginning and in each simulation we simply generate new statistics. From a Bayesian perspective, it would be more appropriate to generate a new parameter vector from the prior each time. This might explain why we get overall slight undercoverage from the `ashr`  intervals in this setting. `ashr` also takes substantially longer to run than the parametric bootstrap (on a normal laptop, the code below took nearly 7 minutes while the parametric bootstrap took only 30 seconds.) In this example, `ashr` does a good job controlling the RCC for the top parameters. This is, in part, because the true parameters are sparse. We found in the paper that when the parameters are not sparse, performance is much worse.
 
-```{r, cache=TRUE, message=FALSE}
+```{r}
 system.time(ash.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing = TRUE)
   ash.res <- ash(betahat = zz, sebetahat = rep(1, 1000), mixcompdist = "normal")
@@ -309,7 +310,7 @@ system.time(ash.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
 }))
 summary(colMeans(ash.coverage))
 ```
-```{r, fig.show="hold", echo=FALSE, out.width="0.5\\textwidth"}
+```{r, fig.show="hold", echo=FALSE}
 dat <- data.frame("Rank"=1:1000, "Coverage"=rowMeans(ash.coverage))
 ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  + 
   geom_hline(yintercept=0.9) + 
@@ -374,22 +375,22 @@ legend <- rccSims:::make_sim_legend(legend.names = c("Marginal", "Parametric\nBo
               ltys= c(2, 1, 3, 6, 4, 2))
 ```
 
-```{r, fig.show="hold",  out.width="0.5\\textwidth"}
+```{r, fig.show="hold"}
 covplots[[1]]
 widthplots[[1]]
 ```
 
-```{r, fig.show="hold",out.width="0.5\\textwidth"}
+```{r, fig.show="hold"}
 covplots[[2]]
 widthplots[[2]]
 ```
 
-```{r, fig.show="hold",out.width="0.5\\textwidth"}
+```{r, fig.show="hold"}
 covplots[[3]]
 widthplots[[3]]
 ```
 
-```{r, fig.show="hold",out.width="0.5\\textwidth"}
+```{r, fig.show="hold"}
 covplots[[4]]
 widthplots[[4]]
 ```
