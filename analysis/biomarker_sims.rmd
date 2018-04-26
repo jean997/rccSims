@@ -7,7 +7,7 @@ bibliography: ci_bib.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.show='hold')
+knitr::opts_chunk$set(echo = TRUE, fig.show='hold', warning=FALSE, message=FALSE)
 ```
 
 ## Simulation Set-up

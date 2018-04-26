@@ -7,7 +7,7 @@ bibliography: ci_bib.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 ```
 
 In this document we will compare several different approaches to building confidence intervals in high dimensions using the example in Section 1.5 of "Rank conditional coverage and confidence intervals in high dimensional problems" by Jean Morrison and Noah Simon.
@@ -300,7 +300,7 @@ rccSims::plot_cis(rank, ci.ash, theta, prop=0.2, plot.truth=TRUE) + ggtitle("ash
 
 We can look at the average coverage of the `ashr` credible intervals over 100 simulations. It is worth noting that we have conducted the simulations from more of a frequentist point of view --- the parameters were fixed at the beginning and in each simulation we simply generate new statistics. From a Bayesian perspective, it would be more appropriate to generate a new parameter vector from the prior each time. This might explain why we get overall slight undercoverage from the `ashr`  intervals in this setting. `ashr` also takes substantially longer to run than the parametric bootstrap (on a normal laptop, the code below took nearly 7 minutes while the parametric bootstrap took only 30 seconds.) In this example, `ashr` does a good job controlling the RCC for the top parameters. This is, in part, because the true parameters are sparse. We found in the paper that when the parameters are not sparse, performance is much worse.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 system.time(ash.coverage <- apply(z_many, MARGIN=2, FUN=function(zz){
   j <- order(abs(zz), decreasing = TRUE)
   ash.res <- ash(betahat = zz, sebetahat = rep(1, 1000), mixcompdist = "normal")
