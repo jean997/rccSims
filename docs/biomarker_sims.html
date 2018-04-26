@@ -317,7 +317,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-04-25</p>
+<p><strong>Last updated:</strong> 2018-04-26</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -341,7 +341,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/c386af2b56d90b5d3682649b3815de30a3c60d33" target="_blank">c386af2</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/6ad971fe9fc03f3026319a77f213f9ce051fc0e7" target="_blank">6ad971f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -349,29 +349,10 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  .Rbuildignore
     Untracked:  R/get_fcr.R
-    Untracked:  analysis/biomarker_sims_cache/
     Untracked:  analysis/ci_bib.bib
-    Untracked:  analysis/compare_cis_cache/
-    Untracked:  analysis/compare_cis_temp.Rmd
-    Untracked:  analysis/compare_cis_temp_cache/
-    Untracked:  analysis/linreg_sims.rmd
-    Untracked:  analysis/linreg_sims_cache/
     Untracked:  data/sim.list.new.rda
     Untracked:  temp.RData
-    Untracked:  walkthroughs/biomarker_sims_cache/
-    Untracked:  walkthroughs/biomarker_sims_files/
-    Untracked:  walkthroughs/ci_bib_small.bib
-    Untracked:  walkthroughs/compare_cis_cache/
-    Untracked:  walkthroughs/compare_cis_files/
-    Untracked:  walkthroughs/linreg_sims_cache/
-    Untracked:  walkthroughs/linreg_sims_files/
-
-Unstaged changes:
-    Modified:   NAMESPACE
-    Modified:   walkthroughs/ci_bib.bib
-    Modified:   walkthroughs/compare_cis.rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -400,6 +381,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/6ad971fe9fc03f3026319a77f213f9ce051fc0e7/analysis/biomarker_sims.rmd" target="_blank">6ad971f</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-26
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/biomarker_sims.rmd”, “analysis/compare_cis.rmd”, “analysis/linreg_sims.rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/jean997/rccSims/079824d19cbafb3753a553554a87fba1f88ab77a/docs/biomarker_sims.html" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 rmd
@@ -454,7 +469,37 @@ dat$trt &lt;- as.factor(dat$trt)
 ggplot(dat) + geom_line(aes(x=w, y=Ey, group=trt, col=trt)) + 
   geom_point(aes(x=w, y=y, col=trt, group=trt)) + 
   ylab(&quot;E[Y]&quot;) + theme_bw() + theme(panel.grid = element_blank())</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-1-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-1-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>We will consider 100 cutopoints between 0.1 and 0.9, <span class="math inline">\(w_1, \dots, w_{100}\)</span>. For each cutpoint, <span class="math inline">\(j \in 1, \dots, 100\)</span>, we estimate the difference in average treatment effect for individuals above and below the cutpoint: <span class="math display">\[ \beta_j = (E[Y | trt=1, W \geq w_j] - E[Y | trt=0, W \geq w_j])- (E[Y | trt=1, W &lt; w_j] - E[Y | trt=0, W &lt; w_j])\]</span></p>
 <p>We can estimate <span class="math inline">\(\beta_j\)</span> by fitting the parameters in the regression</p>
 <p><span class="math display">\[
@@ -490,7 +535,37 @@ head(stats)</code></pre>
 ggplot(stats_long) + geom_point(aes(x=cutpoint, y=value, group=type, color=type)) + 
   scale_color_discrete(labels=c(&quot;Estimate&quot;, &quot;Truth&quot;)) + ggtitle(&quot;Effect Size Estimates&quot;) + 
   theme_bw() + theme(panel.grid=element_blank(), axis.title.y=element_blank(), legend.title = element_blank())</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-2-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-2-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Because we use the same individuals to estimate each parameter, the estimates are highly correlated.</p>
 </div>
 <div id="confidence-intervals" class="section level2">
@@ -527,10 +602,71 @@ sum(ci.nonpar[,1] &lt;= stats$truth &amp; stats$truth &lt;= ci.nonpar[,2])/n.cut
 <p>Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.</p>
 <pre class="r"><code>plot_cis(stats$rank, ci.nonpar, stats$truth, plot.truth=TRUE) + 
   ggtitle(&quot;Non-Parametric Bootstrap Confidence Intervals&quot;)</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-3-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> Here they are plotted versus cutpoint:</p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-3-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>Here they are plotted versus cutpoint:</p>
 <pre class="r"><code>plot_cis(cutpoints, ci.nonpar, stats$truth, plot.truth=TRUE) + 
   ggtitle(&quot;Non-Parametric Bootstrap Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-4-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-4-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="parametric-bootstrap" class="section level3">
 <h3>Parametric Bootstrap</h3>
@@ -539,10 +675,71 @@ sum(ci.nonpar[,1] &lt;= stats$truth &amp; stats$truth &lt;= ci.nonpar[,2])/n.cut
 <p>Here are the intervals plotted versus rank. Colored points indicate the true value of the parameter.</p>
 <pre class="r"><code>plot_cis(stats$rank, ci.par, stats$truth, plot.truth=TRUE) + 
   ggtitle(&quot;Parametric Bootstrap Confidence Intervals&quot;)</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-5-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> Here they are plotted versus cut-point:</p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-5-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>Here they are plotted versus cut-point:</p>
 <pre class="r"><code>plot_cis(cutpoints, ci.par, stats$truth, plot.truth=TRUE) + 
   ggtitle(&quot;Parametric Bootstrap Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-6-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-6-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The parametric bootstrap confidence intervals perform more poorly than the non-parametric confidence intervals because estimates are highly correlated but this isn’t modeled in the basic parametric bootstrapping algorithm. These intervals tend to undercover parameters associated with the most and least significant estimates.</p>
 </div>
 <div id="marginal-confidence-intervals" class="section level3">
@@ -555,7 +752,68 @@ mean(ci.naive[,1] &lt;= stats$truth &amp; stats$truth &lt;= ci.naive[,2])</code>
   ggtitle(&quot;Standard Marginal Confidence Intervals&quot;)
 plot_cis(cutpoints, ci.naive, stats$truth, plot.truth=TRUE) + 
   ggtitle(&quot;Standard Marginal Confidence Intervals&quot;) + xlab(&quot;Cutpoint&quot;)</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-8-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/unnamed-chunk-8-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /> These do pretty well since the estimates are so correlated.</p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-8-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/biomarker_sims.rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-8-2.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>These do pretty well since the estimates are so correlated.</p>
 </div>
 <div id="selection-adjusted-confidence-intervals" class="section level3">
 <h3>Selection Adjusted Confidence Intervals</h3>
@@ -575,7 +833,37 @@ mean(ci.wfb[,1] &lt;= stats$truth &amp; ci.wfb[,2]&gt;= stats$truth, na.rm=TRUE)
 <pre><code>[1] 1</code></pre>
 <p>Here are the 10 WFB intervals which all cover their respective parameters</p>
 <pre><code>Warning: Removed 90 rows containing missing values (geom_linerange).</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-10-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-10-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Here are the selection adjusted confidence intervals of <span class="citation">Reid, Taylor, and Tibshirani (2014)</span>. These are implemented in the <code>selectiveInference</code> R package.</p>
 <pre class="r"><code>M &lt;- manyMeans(y=stats$tstat, k=0.1*n.cutpoints, alpha=0.1, sigma=1)
 ci.rtt &lt;- matrix(nrow=n.cutpoints, ncol=2)
@@ -583,7 +871,37 @@ ci.rtt[M$selected.set, ] &lt;- M$ci
 mean(ci.rtt[,1] &lt;= stats$truth &amp; ci.rtt[,2]&gt;= stats$truth, na.rm=TRUE)</code></pre>
 <pre><code>[1] 0.9</code></pre>
 <pre><code>Warning: Removed 10 rows containing missing values (geom_linerange).</code></pre>
-<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-12-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-12-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>This method gives the 10th ranked parameter a very short confidence interval!</p>
 </div>
 <div id="empirical-bayes-confidence-intervals" class="section level3">
@@ -593,7 +911,37 @@ mean(ci.rtt[,1] &lt;= stats$truth &amp; ci.rtt[,2]&gt;= stats$truth, na.rm=TRUE)
 ci.ash &lt;- ashci(ash.res, level=0.9, betaindex = 1:n.cutpoints, trace=FALSE)
 mean(ci.ash[,1]&lt;= stats$truth &amp; ci.ash[,2] &gt;= stats$truth)</code></pre>
 <pre><code>[1] 0.85</code></pre>
-<p>Here are the ashr intervals at all ranks <img src="figure/biomarker_sims.rmd/unnamed-chunk-14-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Here are the ashr intervals at all ranks <img src="figure/biomarker_sims.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/unnamed-chunk-14-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="replicate-the-results-in-the-paper" class="section level2">
@@ -629,7 +977,97 @@ Warning in stats::qt(level/2 + 0.5, pred$df): NaNs produced</code></pre>
 <pre class="r"><code>widthplot</code></pre>
 <pre><code>Warning: Removed 182 rows containing missing values (geom_path).</code></pre>
 <pre class="r"><code>legend$plot</code></pre>
-<p><img src="figure/biomarker_sims.rmd/plotresults-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/plotresults-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/biomarker_sims.rmd/plotresults-3.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/biomarker_sims.rmd/plotresults-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of plotresults-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/plotresults-1.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/biomarker_sims.rmd/plotresults-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of plotresults-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/plotresults-2.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/biomarker_sims.rmd/plotresults-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of plotresults-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/079824d19cbafb3753a553554a87fba1f88ab77a/docs/figure/biomarker_sims.rmd/plotresults-3.png" target="_blank">079824d</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>

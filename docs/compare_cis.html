@@ -318,7 +318,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-04-25</p>
+<p><strong>Last updated:</strong> 2018-04-26</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -342,36 +342,18 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/c33de4309c7c7043a4bdaf73a5eb5f010d3e36f9" target="_blank">c33de43</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/6ad971fe9fc03f3026319a77f213f9ce051fc0e7" target="_blank">6ad971f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    docs/figure/
 
 Untracked files:
-    Untracked:  .Rbuildignore
     Untracked:  R/get_fcr.R
-    Untracked:  analysis/biomarker_sims.rmd
     Untracked:  analysis/ci_bib.bib
-    Untracked:  analysis/compare_cis_cache/
-    Untracked:  analysis/compare_cis_temp.Rmd
-    Untracked:  analysis/compare_cis_temp_cache/
-    Untracked:  analysis/linreg_sims.rmd
     Untracked:  data/sim.list.new.rda
-    Untracked:  walkthroughs/biomarker_sims_cache/
-    Untracked:  walkthroughs/biomarker_sims_files/
-    Untracked:  walkthroughs/ci_bib_small.bib
-    Untracked:  walkthroughs/compare_cis_cache/
-    Untracked:  walkthroughs/compare_cis_files/
-    Untracked:  walkthroughs/linreg_sims_cache/
-    Untracked:  walkthroughs/linreg_sims_files/
-
-Unstaged changes:
-    Modified:   NAMESPACE
-    Modified:   walkthroughs/ci_bib.bib
-    Modified:   walkthroughs/compare_cis.rmd
+    Untracked:  temp.RData
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -405,6 +387,40 @@ Message
 rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/6ad971fe9fc03f3026319a77f213f9ce051fc0e7/analysis/compare_cis.rmd" target="_blank">6ad971f</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-26
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/biomarker_sims.rmd”, “analysis/compare_cis.rmd”, “analysis/linreg_sims.rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/jean997/rccSims/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/compare_cis.html" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/jean997/rccSims/blob/c33de4309c7c7043a4bdaf73a5eb5f010d3e36f9/analysis/compare_cis.rmd" target="_blank">c33de43</a>
 </td>
 <td style="text-align:left;">
@@ -430,6 +446,8 @@ wflow_publish(c(“analysis/compare_cis.rmd”, “analysis/index.Rmd”))
 <pre class="r"><code>library(ggplot2)
 library(rcc)
 library(rccSims)
+library(selectiveInference)
+
 set.seed(1e7)
 theta &lt;- rnorm(1000)
 Z &lt;- rnorm(n=1000, mean=theta)
@@ -445,8 +463,68 @@ sum(ci.naive[,1] &lt;= theta &amp; ci.naive[,2] &gt;= theta)/1000</code></pre>
 <pre><code>[1] 0.894</code></pre>
 <p>We can plot these intervals and color them by whether or not they cover their target parameter. Notice that even though the overall coverage rate is close to the nominal level, a lot of the non-covering intervals are constructed for the most extreme statistics.</p>
 <pre class="r"><code>rccSims::plot_cis(rank, ci.naive, theta) + ggtitle(&quot;Standard Marginal Intervals&quot;)</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-3-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
-<p>Here is the same plot for only the top 20% of statistics. In this plot, points show the value of the true parameter. <img src="figure/compare_cis.rmd/unnamed-chunk-4-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-3-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>Here is the same plot for only the top 20% of statistics. In this plot, points show the value of the true parameter. <img src="figure/compare_cis.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-4-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>This is just one data set. To see what the expected coverage rates at each rank are we’ll simulate 100 more data sets:</p>
 <pre class="r"><code>z_many &lt;- replicate(n=100, expr={rnorm(n=1000, mean=theta)})
 naive.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
@@ -455,7 +533,37 @@ naive.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   covered &lt;- (ci[,1] &lt;= theta &amp; ci[,2] &gt;= theta)[j]
   return(covered)
 })</code></pre>
-<p>Plotting the average coverage at each rank: <img src="figure/compare_cis.rmd/unnamed-chunk-6-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Plotting the average coverage at each rank: <img src="figure/compare_cis.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-6-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="selection-adjusted-confidence-intervals" class="section level2">
 <h2>Selection adjusted confidence intervals</h2>
@@ -468,7 +576,37 @@ theta.sel &lt;- theta[rank &lt;= 100]
 ci.by &lt;- cbind(Z.sel - qnorm(0.995) , Z.sel + qnorm(0.995))
 sum(ci.by[,1] &lt;= theta.sel &amp; ci.by[,2] &gt;= theta.sel)/100</code></pre>
 <pre><code>[1] 0.89</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-8-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-8-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Now averaging coverage of the BY intervals over 100 data sets:</p>
 <pre class="r"><code>system.time(by.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   j &lt;- order(abs(zz), decreasing=TRUE)
@@ -477,12 +615,42 @@ sum(ci.by[,1] &lt;= theta.sel &amp; ci.by[,2] &gt;= theta.sel)/100</code></pre>
   return(covered)
 }))</code></pre>
 <pre><code>   user  system elapsed 
-  0.018   0.000   0.017 </code></pre>
+  0.017   0.000   0.017 </code></pre>
 <pre class="r"><code>#The average coverage in each simulation is close to the nominal level
 summary(colMeans(by.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.8600  0.9100  0.9300  0.9282  0.9500  0.9800 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-10-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-10-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>These intervals have reduced coverage for the top ranked estimates even though the average coverage in the selected set is correct.</p>
 </div>
 <div id="weinstein2013-intervals" class="section level3">
@@ -499,7 +667,37 @@ wfb &lt;- lapply(Z, FUN=function(x){
 ci.wfb &lt;- matrix(unlist(wfb), byrow=TRUE, nrow=1000)[rank &lt;= 100,]
 sum(ci.wfb[,1] &lt;= theta[rank &lt;=100] &amp; ci.wfb[,2]&gt;= theta[rank&lt;=100])/100</code></pre>
 <pre><code>[1] 0.93</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-12-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-12-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Most of the non-covering intervals are still for the parameters with the most significnt estimates. This pattern is clear when we look at the average coverage over 100 data sets:</p>
 <pre class="r"><code>system.time(wfb.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   j &lt;- order(abs(zz), decreasing=TRUE)
@@ -515,24 +713,83 @@ sum(ci.wfb[,1] &lt;= theta[rank &lt;=100] &amp; ci.wfb[,2]&gt;= theta[rank&lt;=1
   return(covered)
 }))</code></pre>
 <pre><code>   user  system elapsed 
-  4.319   0.008   4.330 </code></pre>
+  4.170   0.000   4.171 </code></pre>
 <pre class="r"><code>#The average coverage in each simulation is close to the nominal level
 summary(colMeans(wfb.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.8400  0.8900  0.9100  0.9053  0.9200  0.9600 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-14-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-14-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="reid2014-intervals" class="section level3">
 <h3><span class="citation">Reid, Taylor, and Tibshirani (2014)</span> Intervals</h3>
 <p>Finally, lets look at the intervals of <span class="citation">Reid, Taylor, and Tibshirani (2014)</span>. These are implemented in the <code>selectiveInference</code> R package</p>
-<pre class="r"><code>library(selectiveInference)
-M &lt;- manyMeans(y=Z, k=100, alpha=0.1, sigma=1)
+<pre class="r"><code>M &lt;- manyMeans(y=Z, k=100, alpha=0.1, sigma=1)
 ci.rtt &lt;- matrix(nrow=1000, ncol=2)
 ci.rtt[M$selected.set, ] &lt;- M$ci
 ci.rtt &lt;- ci.rtt[rank &lt;= 100,]
 sum(ci.rtt[,1] &lt;= theta[rank &lt;=100] &amp; ci.rtt[,2]&gt;= theta[rank&lt;=100])/100</code></pre>
 <pre><code>[1] 0.88</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-16-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-16-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>For the most part, these intervals are narrower than the <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> intervals. Non-covering intervals tend to be concentrated at the two extremes – parameters associated with the most and least significant estimates tend to go uncovered. We can see this by looking at the average over 100 simulations:</p>
 <pre class="r"><code>system.time(rtt.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   j &lt;- order(abs(zz), decreasing=TRUE)
@@ -544,12 +801,42 @@ sum(ci.rtt[,1] &lt;= theta[rank &lt;=100] &amp; ci.rtt[,2]&gt;= theta[rank&lt;=1
   return(covered)
 }))</code></pre>
 <pre><code>   user  system elapsed 
-  7.990   0.000   7.991 </code></pre>
+  7.981   0.000   7.983 </code></pre>
 <pre class="r"><code>#The average coverage in each simulation is close to the nominal level
 summary(colMeans(rtt.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.8400  0.8800  0.9000  0.9017  0.9225  0.9600 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-18-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-18-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="parametric-bootstrap" class="section level2">
@@ -588,7 +875,68 @@ head(ci.boot2)</code></pre>
 <pre><code>[1] TRUE</code></pre>
 <pre class="r"><code>all.equal(ci.boot2$ci.upper, ci.boot[,2])</code></pre>
 <pre><code>[1] TRUE</code></pre>
-<p>Here are the parametric bootstrap intervals for all ranks: <img src="figure/compare_cis.rmd/unnamed-chunk-23-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> and for just the top 20% of ranks <img src="figure/compare_cis.rmd/unnamed-chunk-24-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Here are the parametric bootstrap intervals for all ranks: <img src="figure/compare_cis.rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-23-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-23-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>and for just the top 20% of ranks <img src="figure/compare_cis.rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-24-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-24-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Looking at the average coverage over 100 data sets we see that the parametric bootstrap intervals are slightly conservative but that the average coverage for each rank is close to the nominal level.</p>
 <pre class="r"><code>system.time(boot.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   ci &lt;- rcc::par_bs_ci(beta=zz)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
@@ -596,11 +944,41 @@ head(ci.boot2)</code></pre>
   return(covered)
 }))</code></pre>
 <pre><code>   user  system elapsed 
- 34.948   0.196  35.146 </code></pre>
+ 35.068   0.152  35.228 </code></pre>
 <pre class="r"><code>summary(colMeans(boot.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.9180  0.9330  0.9370  0.9377  0.9440  0.9540 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-26-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-26-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-26-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The difference between the observed average coverage at each rank and the nominal level is a result of using <span class="math inline">\(Z_i\)</span> as an estimate for <span class="math inline">\(\theta_i\)</span> in the bootstrapping step. If we knew <span class="math inline">\(\theta_i\)</span> we could generate the oracle bootstrap intervals which achieve exactly the right coverage at each rank (and are much smaller):</p>
 <pre class="r"><code>oracle.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   ci &lt;- rcc::par_bs_ci(beta=zz, theta=theta)[, c(&quot;ci.lower&quot;, &quot;ci.upper&quot;)]
@@ -610,7 +988,37 @@ head(ci.boot2)</code></pre>
 summary(colMeans(oracle.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.8780  0.8918  0.8990  0.8981  0.9040  0.9170 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-28-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-28-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-28-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="empirical-bayes-credible-intervals" class="section level2">
 <h2>Empirical Bayes Credible Intervals</h2>
@@ -620,7 +1028,68 @@ ash.res &lt;- ash(betahat = Z, sebetahat = rep(1, 1000), mixcompdist = &quot;nor
 ci.ash &lt;- ashci(ash.res, level=0.9, betaindex = 1:1000, trace=FALSE)
 sum(ci.ash[,1]&lt;= theta &amp; ci.ash[,2] &gt;= theta)/1000</code></pre>
 <pre><code>[1] 0.877</code></pre>
-<p>Here are the ashr intervals at all ranks <img src="figure/compare_cis.rmd/unnamed-chunk-30-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /> and for just the parameters with estimates in the top 20% <img src="figure/compare_cis.rmd/unnamed-chunk-31-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p>Here are the ashr intervals at all ranks <img src="figure/compare_cis.rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-30-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>and for just the parameters with estimates in the top 20% <img src="figure/compare_cis.rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-31-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>We can look at the average coverage of the <code>ashr</code> credible intervals over 100 simulations. It is worth noting that we have conducted the simulations from more of a frequentist point of view — the parameters were fixed at the beginning and in each simulation we simply generate new statistics. From a Bayesian perspective, it would be more appropriate to generate a new parameter vector from the prior each time. This might explain why we get overall slight undercoverage from the <code>ashr</code> intervals in this setting. <code>ashr</code> also takes substantially longer to run than the parametric bootstrap (on a normal laptop, the code below took nearly 7 minutes while the parametric bootstrap took only 30 seconds.) In this example, <code>ashr</code> does a good job controlling the RCC for the top parameters. This is, in part, because the true parameters are sparse. We found in the paper that when the parameters are not sparse, performance is much worse.</p>
 <pre class="r"><code>system.time(ash.coverage &lt;- apply(z_many, MARGIN=2, FUN=function(zz){
   j &lt;- order(abs(zz), decreasing = TRUE)
@@ -629,12 +1098,142 @@ sum(ci.ash[,1]&lt;= theta &amp; ci.ash[,2] &gt;= theta)/1000</code></pre>
   covered &lt;- (ci[,1] &lt;= theta &amp; ci[,2] &gt;= theta)[j]
   return(covered)
 }))</code></pre>
+<pre><code>Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm
+Due to absence of package REBayes, switching to EM algorithm</code></pre>
 <pre><code>   user  system elapsed 
-404.218   1.424 405.705 </code></pre>
+409.547   0.812 410.372 </code></pre>
 <pre class="r"><code>summary(colMeans(ash.coverage))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  0.8220  0.8592  0.8740  0.8712  0.8840  0.9120 </code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-33-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-33-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-33-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="generating-simulation-results-in-the-paper" class="section level2">
 <h2>Generating simulation results in the paper</h2>
@@ -684,23 +1283,263 @@ legend &lt;- rccSims:::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &q
 <pre><code>Warning: Removed 4 rows containing missing values (geom_path).</code></pre>
 <pre class="r"><code>widthplots[[1]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-37-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/compare_cis.rmd/unnamed-chunk-37-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-37-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-37-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/compare_cis.rmd/unnamed-chunk-37-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-37-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-37-2.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[2]]</code></pre>
 <pre><code>Warning: Removed 201 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[2]]</code></pre>
 <pre><code>Warning: Removed 201 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-38-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/compare_cis.rmd/unnamed-chunk-38-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-38-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-38-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/compare_cis.rmd/unnamed-chunk-38-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-38-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-38-2.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[3]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre><code>Warning: Removed 1 rows containing missing values (geom_path).</code></pre>
 <pre class="r"><code>widthplots[[3]]</code></pre>
 <pre><code>Warning: Removed 208 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-39-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/compare_cis.rmd/unnamed-chunk-39-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-39-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-39-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/compare_cis.rmd/unnamed-chunk-39-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-39-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-39-2.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[4]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[4]]</code></pre>
 <pre><code>Warning: Removed 201 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/compare_cis.rmd/unnamed-chunk-40-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/compare_cis.rmd/unnamed-chunk-40-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/compare_cis.rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-40-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-40-1.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/compare_cis.rmd/unnamed-chunk-40-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-40-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/034f8fd804b79964b93fa1580b54a55dc26aba5b/docs/figure/compare_cis.rmd/unnamed-chunk-40-2.png" target="_blank">034f8fd</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

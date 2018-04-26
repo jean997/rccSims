@@ -317,7 +317,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-04-25</p>
+<p><strong>Last updated:</strong> 2018-04-26</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -341,7 +341,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/cb9059b1d4d4039c92e45b025bcb700930996486" target="_blank">cb9059b</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/jean997/rccSims/tree/6ad971fe9fc03f3026319a77f213f9ce051fc0e7" target="_blank">6ad971f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -350,12 +350,7 @@ Ignored files:
 
 Untracked files:
     Untracked:  R/get_fcr.R
-    Untracked:  analysis/biomarker_sims_cache/
     Untracked:  analysis/ci_bib.bib
-    Untracked:  analysis/compare_cis_cache/
-    Untracked:  analysis/compare_cis_temp.Rmd
-    Untracked:  analysis/compare_cis_temp_cache/
-    Untracked:  analysis/linreg_sims_cache/
     Untracked:  data/sim.list.new.rda
     Untracked:  temp.RData
 
@@ -386,6 +381,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/6ad971fe9fc03f3026319a77f213f9ce051fc0e7/analysis/linreg_sims.rmd" target="_blank">6ad971f</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-26
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/biomarker_sims.rmd”, “analysis/compare_cis.rmd”, “analysis/linreg_sims.rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/jean997/rccSims/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/linreg_sims.html" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 rmd
@@ -463,7 +492,37 @@ for(k in 1:n.block){
 f_marg$truth &lt;- truth
 plot(f_marg$beta, f_marg$truth, xlab=&quot;Estimate&quot;, ylab=&quot;Truth&quot;, col=rep(rep(c(1, 2, 1), c(4, 1, 5)), 10))
 abline(0, 1)</code></pre>
-<p><img src="figure/linreg_sims.rmd/truth-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/truth-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of truth-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/truth-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="block-based-ranking-scheme" class="section level2">
 <h2>Block-Based Ranking Scheme</h2>
@@ -503,7 +562,67 @@ sum(ci.naive[,1] &lt;= f_marg$truth &amp; ci.naive[,2] &gt;= f_marg$truth, na.rm
 <p>Here we plot the naive intervals vs. both ranks</p>
 <pre class="r"><code>plot_cis(f_marg$rank_usual, ci.naive, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Naive intervals: Usual ranking&quot;)
 plot_cis(f_marg$rank_block[block_ix], ci.naive[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Naive intervals: Block-based ranking&quot;)</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-2-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-2-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-2-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-2-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="parametric-bootstrap" class="section level2">
 <h2>Parametric bootstrap</h2>
@@ -519,7 +638,67 @@ mean(ci.par.usual[,1] &lt;= f_marg$truth &amp; ci.par.usual[,2] &gt;= f_marg$tru
 <pre><code>[1] 0.99</code></pre>
 <pre class="r"><code>plot_cis(f_marg$rank_usual, ci.par.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Parametric bootstrap intervals: Usual ranking&quot;)
 plot_cis(f_marg$rank_block[block_ix], ci.par.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Parametric bootstrap intervals: Block-based ranking&quot;)</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-3-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-3-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-3-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-3-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="non-parametric-bootstrap" class="section level2">
 <h2>Non-parametric bootstrap</h2>
@@ -547,7 +726,67 @@ mean(ci.nonpar.block[,1] &lt;= f_marg$truth &amp; ci.nonpar.block[,2] &gt;= f_ma
 <pre><code>[1] 0.96</code></pre>
 <pre class="r"><code>plot_cis(f_marg$rank_usual, ci.nonpar.usual, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;Non-parametric bootstrap intervals: Usual ranking&quot;)
 plot_cis(f_marg$rank_block[block_ix], ci.nonpar.block[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;Non-parametric bootstrap intervals: Block-based ranking&quot;)</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-4-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-4-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-4-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-4-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Selection adjusted intervals of <span class="citation">Weinstein, Fithian, and Benjamini (2013)</span> and <span class="citation">Reid, Taylor, and Tibshirani (2014)</span> are discussed in the walk-through for Section 1.5 and they look quite similar in this case so we will skip them here. They are included in the full simulation results below. We will show <code>ashr</code> credible intervals for this problem since, in this case the true parameter values are non-sparse (we are measuring the marginal effects) which leads to worse performance for <code>ashr</code>.</p>
 </div>
 <div id="empirical-bayes-credible-intervals-ashr-stephens-201" class="section level2">
@@ -559,7 +798,67 @@ mean(ci.ash[,1]&lt;= f_marg$truth &amp; ci.ash[,2] &gt;= f_marg$truth)</code></p
 <pre><code>[1] 0.803</code></pre>
 <pre class="r"><code>plot_cis(f_marg$rank_usual, ci.ash, f_marg$truth, plot.truth = TRUE, prop=0.2) + xlab(&quot;Usual Rank&quot;) + ggtitle(&quot;ashr credible intervals: Usual ranking&quot;)
 plot_cis(f_marg$rank_block[block_ix], ci.ash[block_ix,], f_marg$truth[block_ix], plot.truth = TRUE) + xlab(&quot;Block Rank&quot;) + ggtitle(&quot;ashr credible intervals: Block-based ranking&quot;)</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-6-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-6-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-6-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-6-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="simulations-in-section-3.1-and-appendix-section-3" class="section level2">
 <h2>Simulations in Section 3.1 and Appendix section 3</h2>
@@ -610,22 +909,262 @@ legend &lt;- rccSims::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &qu
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[1]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-9-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-9-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-9-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-9-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[2]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[2]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-10-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-10-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-10-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-10-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[3]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[3]]</code></pre>
 <pre><code>Warning: Removed 201 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-11-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-11-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-11-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-11-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[4]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing non-finite values (stat_smooth).</code></pre>
 <pre class="r"><code>widthplots[[4]]</code></pre>
 <pre><code>Warning: Removed 200 rows containing missing values (geom_path).</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-12-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-12-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-12-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-12-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Here are plots using the block-based ranking scheme (Appendix Section 3). We don’t include the selection adjusted intervals in these plots because they only consider selection schemes based on absolute value.</p>
 <pre class="r"><code>covplots &lt;- list()
 widthplots &lt;- list()
@@ -649,16 +1188,256 @@ legend &lt;- rccSims:::make_sim_legend(legend.names = c(&quot;Marginal&quot;, &q
             ltys= c(2, 1, 3, 6))</code></pre>
 <pre class="r"><code>covplots[[1]]
 widthplots[[1]]</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-15-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-15-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-15-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-15-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[2]]
 widthplots[[2]]</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-16-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-16-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-16-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-16-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[3]]
 widthplots[[3]]</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-17-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-17-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-17-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-17-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-17-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-17-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>covplots[[4]]
 widthplots[[4]]</code></pre>
-<p><img src="figure/linreg_sims.rmd/unnamed-chunk-18-1.png" width="0.5\textwidth" style="display: block; margin: auto;" /><img src="figure/linreg_sims.rmd/unnamed-chunk-18-2.png" width="0.5\textwidth" style="display: block; margin: auto;" /></p>
+<p><img src="figure/linreg_sims.rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-18-1.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/linreg_sims.rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/jean997/rccSims/blob/16a0f93ce39e23fcb25aa86eb45cccd74a2f596c/docs/figure/linreg_sims.rmd/unnamed-chunk-18-2.png" target="_blank">16a0f93</a>
+</td>
+<td style="text-align:left;">
+Jean Morrison
+</td>
+<td style="text-align:left;">
+2018-04-25
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
